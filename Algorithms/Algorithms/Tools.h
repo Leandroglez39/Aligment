@@ -55,7 +55,5 @@ public:
 
 	static int trazas_size;
 
-	static int check_parallel(string s1, string s2);
-
-	static int check_parallel2(string s1, string s2);
+	static vector<vector<int>> calculate_dist_matrix(vector<string>& sequences);
 };

@@ -3,6 +3,7 @@
 #include <omp.h>
 #include <chrono>
 #include <iostream>
+#include "edlib.h"
 
 
 string* Tools::trazas;
@@ -225,6 +226,45 @@ void Tools::create_trazas(const int size)
 	//trazas_ = new string[size];
 }
 
+vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
+{
+	char* query;
+	char* target;
+	string s1;
+	string s2;
+
+	vector<vector<int>> matrix(sequences.size());
+
+	for (size_t i = 0; i < sequences.size(); i++)
+		matrix[i].resize(sequences.size());
+
+
+	matrix[0][0];
+	
+	for (size_t i = 0; i < sequences.size(); i++)
+		for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
+		{
+			s1 = sequences[i];
+			s2 = sequences[j_size];
+
+			query = static_cast<char*>(malloc(sizeof(char) * (sequences[i].size() + 1)));
+			target = static_cast<char*>(malloc(sizeof(char) * (sequences[j_size].size() + 1)));
+
+			copy(s1.begin(), s1.end(), query);
+			query[s1.size()] = '\0';
+			copy(s2.begin(), s2.end(), target);
+			query[s2.size()] = '\0';
+
+			EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+
+
+			matrix[i][j_size] = result.editDistance;
+			matrix[j_size][i] = result.editDistance;
+		}
+
+	return matrix;
+
+}
 
 
 void Tools::set_lista_traza(string traza[])
@@ -312,16 +352,4 @@ int Tools::levenshtein_parallel(const string& s1, const string& s2, int index1, 
 
 	heap.push(pair<int, pair<int, int>>(value * -1, tuple));
 	return value;
-}
-
-void Tools::check_parallel()
-{
-	omp_set_num_threads(4);
-
-#pragma omp parallel for
-	for (int i = 0; i < 3; i++)
-	{
-		cout << "hilo" << "\n";
-	}
-	
 }

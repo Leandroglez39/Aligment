@@ -38,7 +38,7 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 			copy(s1.begin(), s1.end(), query);
 			query[s1.size()] = '\0';
 			copy(s2.begin(), s2.end(), target);
-			query[s2.size()] = '\0';
+			target[s2.size()] = '\0';
 
 			EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
@@ -52,6 +52,12 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 		}
 		else
 		{
+
+			merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
+
+			update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
+
+			update_profile_multiple(profiles, c1.index_i, c2.index_i);
 		}
 	}
 }
@@ -104,7 +110,7 @@ void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string
 			query.push_back(s1[s1_index]);
 			target.push_back(s2[s2_index]);
 			s1_index++;
-			s1_index++;
+			s2_index++;
 		}
 		}
 	}

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "edlib.h"
 #include "Nj.h"
+#include "Tools.h"
 
 using namespace std;
 
@@ -13,10 +14,10 @@ void printAlignment(const char* query, const char* target,
 
 int main()
 {
-	/*const char* query = "ACCTCTG";
-	const char* target = "ACTCTGAAA";
+	const char* query = "casa";
+	const char* target = "carro";
 
-	EdlibAlignResult result = edlibAlign(query, 7, target, 9, edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
+	EdlibAlignResult result = edlibAlign(query, 4, target, 5, edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
 
 	auto endLocations = result.endLocations;
 
@@ -25,21 +26,28 @@ int main()
 	auto alignmentLength = result.alignmentLength;
 
 	printAlignment(query, target, alignment, alignmentLength,
-		*(endLocations), EDLIB_MODE_NW);*/
+		*(endLocations), EDLIB_MODE_NW);
 
-	/*auto instance = NJ();
+	auto gt = NJ();
 
-	instance.init(3);
+	gt.init(3);
 
-	auto& c1 = instance.raw().front();
-	instance.raw().pop();
-	auto& c2 = instance.raw().front();
-	instance.raw().pop();
 
-	instance.merge(c1, c2, 2);
 
-	std::cout << "OK";*/
+	vector<string> sequences;
+	vector<vector<string>> profiles(3);
 
+	sequences.push_back("casa");
+	sequences.push_back("carro");
+	sequences.push_back("perro");
+
+	auto instance = Tools();
+
+	auto m = instance.calculate_dist_matrix(sequences);
+
+	gt.run(sequences, m, profiles);
+
+	cout << "OK";
 
 }
 
