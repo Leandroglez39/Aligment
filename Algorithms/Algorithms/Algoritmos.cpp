@@ -16,7 +16,7 @@ using namespace std;
 
 
 
-int main()  
+int main2()
 {
 	omp_set_num_threads(4);
 
@@ -88,7 +88,7 @@ int main()
 	cout << "Fichero cargado en: ";
 	cout << double(clock() - startTime) / (double)CLOCKS_PER_SEC << " seconds." << endl;
 
-	instance.check_parallel();
+	//instance.check_parallel();
 	/*
 	trazas[0] = "c";
 	trazas[1] = "cc";
@@ -126,7 +126,7 @@ int main()
 
 
 
-
+	return 0; 
 
 
 

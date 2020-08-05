@@ -1,20 +1,80 @@
-// Algorithms.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
+
+#include <algorithm>
 #include <iostream>
+#include "edlib.h"
+
+using namespace std;
+
+void printAlignment(const char* query, const char* target,
+	const unsigned char* alignment, const int alignmentLength,
+	const int position, const EdlibAlignMode modeCode);
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	const char* query = "ACCTCTG";
+	const char* target = "ACTCTGAAA";
+
+	EdlibAlignResult result = edlibAlign(query, 7, target, 9, edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
+
+	auto endLocations = result.endLocations;
+
+
+	auto alignment = result.alignment;
+	auto alignmentLength = result.alignmentLength;
+
+	printAlignment(query, target, alignment, alignmentLength,
+		*(endLocations), EDLIB_MODE_NW);
+
+	std::cout << "Hello World!\n";
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+
+void printAlignment(const char* query, const char* target,
+	const unsigned char* alignment, const int alignmentLength,
+	const int position, const EdlibAlignMode modeCode) {
+	int tIdx = -1;
+	int qIdx = -1;
+	if (modeCode == EDLIB_MODE_HW) {
+		tIdx = position;
+		for (int i = 0; i < alignmentLength; i++) {
+			if (alignment[i] != EDLIB_EDOP_INSERT)
+				tIdx--;
+		}
+	}
+	for (int start = 0; start < alignmentLength; start += 50) {
+		// target
+		printf("T: ");
+		int startTIdx = -1;
+		for (int j = start; j < start + 50 && j < alignmentLength; j++) {
+			if (alignment[j] == EDLIB_EDOP_INSERT)
+				printf("-");
+			else
+				printf("%c", target[++tIdx]);
+			if (j == start)
+				startTIdx = tIdx;
+		}
+		printf(" (%d - %d)\n", max(startTIdx, 0), tIdx);
+
+		// match / mismatch
+		printf("   ");
+		for (int j = start; j < start + 50 && j < alignmentLength; j++) {
+			printf(alignment[j] == EDLIB_EDOP_MATCH ? "|" : " ");
+		}
+		printf("\n");
+
+		// query
+		printf("Q: ");
+		int startQIdx = qIdx;
+		for (int j = start; j < start + 50 && j < alignmentLength; j++) {
+			if (alignment[j] == EDLIB_EDOP_DELETE)
+				printf("-");
+			else
+				printf("%c", query[++qIdx]);
+			if (j == start)
+				startQIdx = qIdx;
+		}
+		printf(" (%d - %d)\n\n", max(startQIdx, 0), qIdx);
+	}
+}
