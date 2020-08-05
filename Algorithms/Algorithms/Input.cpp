@@ -43,7 +43,7 @@ string* input::read_file2(const std::string& path, const unsigned size)
 	return text;
 }
 
-static  vector<string> read_sequence(string path, vector<vector<string>>& prof)
+vector<string> input::read_sequence(string path, vector<vector<string>>& prof)
 {
 
 	vector<string> sequences;

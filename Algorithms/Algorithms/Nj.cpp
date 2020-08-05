@@ -1,5 +1,7 @@
 #include "Nj.h"
 
+
+#include <iostream>
 #include <utility>
 #include "Input.h"
 
@@ -24,7 +26,7 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 	while (this->Tree.size() != 1)
 	{
 
-
+		//cout << "while\n";
 		if (this->Tree.size() >= 2)
 		{
 			auto& c1 = this->Tree.front();
@@ -39,8 +41,11 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 			if (c1.size == 1 && c2.size == 1)
 			{
-				query = static_cast<char*>(malloc(sizeof(char) * (s1.size() + 1)));
-				target = static_cast<char*>(malloc(sizeof(char) * (s1.size() + 1)));
+				//cout << "Por Memoria\n";
+				query = static_cast<char*>(calloc(s1.size() + 1, sizeof(char)));
+				//cout << "Query\n";
+				target = static_cast<char*>(calloc((s1.size() + 1), sizeof(char)));
+				//cout << "target\n";
 
 				copy(s1.begin(), s1.end(), query);
 				query[s1.size()] = '\0';
@@ -49,24 +54,30 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 				EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
+				//cout << "Muero en Merge \n";
 				merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
 
+				//cout << "Muero en update dist matrix\n";
 				update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
 
+				//cout << "Muero en update profile\n";
+				//cout << c1.index_i << "-" << s1 << " " << s2 << "\n";
 				update_profile(profiles, c1.index_i, s1, s2, result.alignment, result.alignmentLength);
 
 				free(query);
-				//free(target);
+				free(target);
 				edlibFreeAlignResult(result);
 
 			}
 			else
 			{
-
+				//cout << "Muero en merge multi\n";
 				merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
 
+				//cout << "Muero en update dist matrix multi\n";
 				update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
 
+				//cout << "Muero en update profile multi\n";
 				update_profile_multiple(profiles, c1.index_i, c2.index_i);
 			}
 		}
@@ -116,7 +127,7 @@ void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string
 		}
 		case 2:
 		{
-			target.push_back(s2[s1_index]);
+			target.push_back(s2[s2_index]);
 			query.push_back('-');
 			s2_index++;
 			break;

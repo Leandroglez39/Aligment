@@ -14,7 +14,7 @@ void printAlignment(const char* query, const char* target,
 
 int main()
 {
-	const char* query = "casa";
+	/*const char* query = "casa";
 	const char* target = "carro";
 
 	EdlibAlignResult result = edlibAlign(query, 4, target, 5, edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
@@ -26,7 +26,7 @@ int main()
 	auto alignmentLength = result.alignmentLength;
 
 	printAlignment(query, target, alignment, alignmentLength,
-		*(endLocations), EDLIB_MODE_NW);
+		*(endLocations), EDLIB_MODE_NW);*/
 
 	auto gt = NJ();
 
@@ -47,11 +47,19 @@ int main()
 
 	auto instance = Tools();
 
+	clock_t start = clock();
+
+	gt.init_data(sequences, profiles, "data1.txt");
+
+	cout << "Init Data OK en: ";
+	cout << double(clock() - start) / (double)CLOCKS_PER_SEC << " seconds." << endl;
+
 	auto m = instance.calculate_dist_matrix(sequences);
 
-	gt.init_data(sequences, profiles, "data.txt");
+
 
 	gt.run(sequences, m, profiles);
+
 
 	cout << "OK";
 

@@ -240,26 +240,29 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 
 
 	matrix[0][0];
-	
+
 	for (size_t i = 0; i < sequences.size(); i++)
 		for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
 		{
 			s1 = sequences[i];
 			s2 = sequences[j_size];
 
-			query = static_cast<char*>(malloc(sizeof(char) * (sequences[i].size() + 1)));
-			target = static_cast<char*>(malloc(sizeof(char) * (sequences[j_size].size() + 1)));
+			query = static_cast<char*>(calloc(sequences[i].size() + 1, sizeof(char)));
+			target = static_cast<char*>(calloc(sequences[j_size].size() + 1, sizeof(char)));
 
 			copy(s1.begin(), s1.end(), query);
 			query[s1.size()] = '\0';
 			copy(s2.begin(), s2.end(), target);
-			query[s2.size()] = '\0';
+			target[s2.size()] = '\0';
 
 			EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
+			free(query);
+			free(target);
 
 			matrix[i][j_size] = result.editDistance;
 			matrix[j_size][i] = result.editDistance;
+			edlibFreeAlignResult(result);
 		}
 
 	return matrix;
