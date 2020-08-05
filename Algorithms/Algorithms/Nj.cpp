@@ -72,7 +72,7 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 }
 
-void NJ::init(size_t size)
+void NJ::init_clusters(size_t size)
 {
 	auto c1 = Cluster();
 
@@ -390,4 +390,10 @@ vector<int> NJ::build_trace_back(vector<vector<int>> steps_matrix)
 	reverse(trace.begin(), trace.end());
 
 	return trace;
+}
+
+void NJ::init_data(vector<string>& sequences, vector<vector<string>>& profiles)
+{
+
+
 }
