@@ -147,7 +147,6 @@
     <ClCompile Include="Algoritmos.cpp" />
     <ClCompile Include="edlib.cpp" />
     <ClCompile Include="Input.cpp" />
-    <ClCompile Include="NJ.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="edlib.h" />
