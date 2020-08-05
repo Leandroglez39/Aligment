@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include "edlib.h"
+#include "Nj.h"
 
 using namespace std;
 
@@ -12,7 +13,7 @@ void printAlignment(const char* query, const char* target,
 
 int main()
 {
-	const char* query = "ACCTCTG";
+	/*const char* query = "ACCTCTG";
 	const char* target = "ACTCTGAAA";
 
 	EdlibAlignResult result = edlibAlign(query, 7, target, 9, edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
@@ -24,9 +25,22 @@ int main()
 	auto alignmentLength = result.alignmentLength;
 
 	printAlignment(query, target, alignment, alignmentLength,
-		*(endLocations), EDLIB_MODE_NW);
+		*(endLocations), EDLIB_MODE_NW);*/
 
-	std::cout << "Hello World!\n";
+	/*auto instance = NJ();
+
+	instance.init(3);
+
+	auto& c1 = instance.raw().front();
+	instance.raw().pop();
+	auto& c2 = instance.raw().front();
+	instance.raw().pop();
+
+	instance.merge(c1, c2, 2);
+
+	std::cout << "OK";*/
+
+
 }
 
 

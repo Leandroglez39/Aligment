@@ -1,5 +1,6 @@
 #pragma once
 #include "Tools.h"
+#include "edlib.h"
 
 using namespace std;
 
