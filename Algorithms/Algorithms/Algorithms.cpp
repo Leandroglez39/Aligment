@@ -30,24 +30,26 @@ int main()
 
 	auto gt = NJ();
 
-	gt.init_clusters(3);
+	/*gt.init_clusters(3);*/
 
 
 
 	vector<string> sequences;
-	vector<vector<string>> profiles(3);
-	profiles[0].push_back("casa");
+	vector<vector<string>> profiles;
+	/*profiles[0].push_back("casa");
 	profiles[1].push_back("atr");
 	profiles[2].push_back("perro");
 
 
 	sequences.push_back("casa");
 	sequences.push_back("atr");
-	sequences.push_back("perro");
+	sequences.push_back("perro");*/
 
 	auto instance = Tools();
 
 	auto m = instance.calculate_dist_matrix(sequences);
+
+	gt.init_data(sequences, profiles, "data.txt");
 
 	gt.run(sequences, m, profiles);
 

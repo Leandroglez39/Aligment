@@ -42,3 +42,33 @@ string* input::read_file2(const std::string& path, const unsigned size)
 
 	return text;
 }
+
+static  vector<string> read_sequence(string path, vector<vector<string>>& prof)
+{
+
+	vector<string> sequences;
+	auto& p = prof;
+
+	vector<string> a(1);
+
+	string line;
+	ifstream myfile(path);
+	string text;
+
+
+	if (myfile.is_open())
+	{
+		while (getline(myfile, line))
+		{
+			sequences.push_back(line);
+			a[0] = line;
+			p.push_back(a);
+		}
+
+		myfile.close();
+	}
+
+
+	return sequences;
+
+}

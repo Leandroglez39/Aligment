@@ -1,5 +1,9 @@
 #include "Nj.h"
 
+#include <utility>
+#include "Input.h"
+
+
 void NJ::merge(Cluster& a, Cluster& b, int dist_between)
 {
 	auto& cluster = a;
@@ -392,8 +396,15 @@ vector<int> NJ::build_trace_back(vector<vector<int>> steps_matrix)
 	return trace;
 }
 
-void NJ::init_data(vector<string>& sequences, vector<vector<string>>& profiles)
+void NJ::init_data(vector<string>& sequences, vector<vector<string>>& profiles, string path)
 {
+
+	auto& text = sequences;
+	auto& profile = profiles;
+
+	text = input::read_sequence(path, profile);
+
+	init_clusters(sequences.size());
 
 
 }

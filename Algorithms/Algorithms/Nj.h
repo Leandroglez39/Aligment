@@ -39,7 +39,7 @@ public:
 
 	static vector<int> build_trace_back(vector<vector<int>> steps_matrix);
 
-	static void init_data(vector<string>& sequences, vector<vector<string>>& profiles, string path);
+	void init_data(vector<string>& sequences, vector<vector<string>>& profiles, string path);
 
 
 
