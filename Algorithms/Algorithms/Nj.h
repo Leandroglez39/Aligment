@@ -35,6 +35,9 @@ public:
 
 	static int score(vector<string> prof1, vector<string> prof2, int row, int col);
 
+	static vector<string> align_alignments(vector<string> profil1, vector<string> profile2);
+
+
 
 
 

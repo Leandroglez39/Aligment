@@ -124,6 +124,12 @@ void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string
 
 void NJ::update_profile_multiple(vector<vector<string>>& profiles, int id_profile1, int id_profile2)
 {
+
+	vector<string> profile;
+
+
+
+
 }
 
 void NJ::update_dist_matrix(vector<vector<int>>& dist_matrix, int i_id, int value)
@@ -141,4 +147,14 @@ void NJ::update_dist_matrix(vector<vector<int>>& dist_matrix, int i_id, int valu
 int NJ::score(vector<string> prof1, vector<string> prof2, int row, int col)
 {
 	return 0;
+}
+
+vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profile2)
+{
+
+	vector<string> result();
+
+
+	
+	
 }

@@ -148,6 +148,7 @@
     <ClCompile Include="edlib.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Nj.cpp" />
+    <ClCompile Include="normal-NW.cpp" />
     <ClCompile Include="Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
