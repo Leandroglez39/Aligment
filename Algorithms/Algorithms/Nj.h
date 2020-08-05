@@ -25,7 +25,7 @@ public:
 
 	void run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector<vector<string>>& profiles);
 
-	void init(size_t size);
+	void init_clusters(size_t size);
 
 	static void update_profile(vector<vector<string>>& profiles, int id_profile, string s1, string s2, const unsigned char* alignment, int length_alignment);
 
@@ -38,6 +38,9 @@ public:
 	static vector<string> align_alignments(vector<string> profil1, vector<string> profile2);
 
 	static vector<int> build_trace_back(vector<vector<int>> steps_matrix);
+
+	static void init_data(vector<string>& sequences, vector<vector<string>>& profiles);
+
 
 
 

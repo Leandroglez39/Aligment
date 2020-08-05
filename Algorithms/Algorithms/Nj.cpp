@@ -108,12 +108,14 @@ void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string
 			query.push_back(s1[s1_index]);
 			target.push_back('-');
 			s1_index++;
+			break;
 		}
 		case 2:
 		{
 			target.push_back(s2[s1_index]);
 			query.push_back('-');
 			s2_index++;
+			break;
 		}
 		default:
 		{
@@ -134,10 +136,9 @@ void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string
 
 void NJ::update_profile_multiple(vector<vector<string>>& profiles, int id_profile1, int id_profile2)
 {
-
-	vector<string> profile;
-
-	profile = align_alignments(profiles[id_profile2], profiles[id_profile1]);
+	vector<string> profile = profiles[id_profile2][0].size() > profiles[id_profile1][0].size()
+		? align_alignments(profiles[id_profile2], profiles[id_profile1])
+		: align_alignments(profiles[id_profile1], profiles[id_profile2]);
 
 	profiles[id_profile1] = profile;
 
@@ -162,17 +163,17 @@ int NJ::score(vector<string> prof1, vector<string> prof2, int row, int col)
 
 	if (prof1.size() > 2 && prof2.size() > 2)
 	{
-		score += prof1[0][row] == prof2[0][col] ? 1 : -1;
-		score += prof1[0][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -1;
-		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+		score += prof1[0][row] == prof2[0][col] ? 1 : -2;
+		score += prof1[0][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
+		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
-		score += prof1[prof1.size() - 1][row] == prof2[0][col] ? 1 : -1;
-		score += prof1[prof1.size() - 1][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -1;
-		score += prof1[prof1.size() - 1][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+		score += prof1[prof1.size() - 1][row] == prof2[0][col] ? 1 : -2;
+		score += prof1[prof1.size() - 1][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
+		score += prof1[prof1.size() - 1][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 1 : -1;
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -1;
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 1 : -2;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
 
 	}
@@ -218,12 +219,12 @@ vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profi
 	for (size_t i = 1; i < size1 + 1; i++)
 	{
 		matrix[i][0] = i * -1;
-		step_trace_back[i][0] = i * -1;
+		step_trace_back[i][0] = 1;
 
 		if (i <= size2)
 		{
 			matrix[0][i] = i * -1;
-			step_trace_back[0][i] = i * -1;
+			step_trace_back[0][i] = 2;
 		}
 	}
 
@@ -245,13 +246,13 @@ vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profi
 			{
 				if (aux[2] >= aux[0])
 				{
-					matrix[i][j] = aux[2];
+					matrix[i][j] = matrix[i - 1][j - 1] + aux[2];
 
 					step_trace_back[i][j] = 0;
 				}
 				else
 				{
-					matrix[i][j] = aux[0];
+					matrix[i][j] = matrix[i - 1][j] + aux[0];
 
 					step_trace_back[i][j] = 1;
 				}
@@ -260,13 +261,13 @@ vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profi
 			{
 				if (aux[1] >= aux[0])
 				{
-					matrix[i][j] = aux[1];
+					matrix[i][j] = matrix[i][j - 1] + aux[1];
 
 					step_trace_back[i][j] = 2;
 				}
 				else
 				{
-					matrix[i][j] = aux[0];
+					matrix[i][j] = matrix[i - 1][j] + aux[0];
 
 					step_trace_back[i][j] = 1;
 				}
@@ -304,6 +305,7 @@ vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profi
 
 			}
 			x++;
+			break;
 		}
 
 		case 2:
@@ -323,6 +325,7 @@ vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profi
 
 			}
 			y++;
+			break;;
 		}
 
 		default:
@@ -358,7 +361,7 @@ vector<int> NJ::build_trace_back(vector<vector<int>> steps_matrix)
 	size_t i = steps_matrix.size() - 1;
 	size_t j = steps_matrix[0].size() - 1;
 
-	while (i != 0 && j != 0)
+	while (i != 0 || j != 0)
 	{
 		switch (steps_matrix[i][j])
 		{
@@ -367,11 +370,13 @@ vector<int> NJ::build_trace_back(vector<vector<int>> steps_matrix)
 
 			trace.push_back(steps_matrix[i][j]);
 			i--;
+			break;
 		}
 		case 2:
 		{
 			trace.push_back(steps_matrix[i][j]);
 			j--;
+			break;
 		}
 		default:
 		{
