@@ -37,7 +37,7 @@ public:
 
 	static vector<string> align_alignments(vector<string> profil1, vector<string> profile2);
 
-
+	static vector<int> build_trace_back(vector<vector<int>> steps_matrix);
 
 
 

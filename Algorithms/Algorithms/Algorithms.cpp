@@ -36,6 +36,10 @@ int main()
 
 	vector<string> sequences;
 	vector<vector<string>> profiles(3);
+	profiles[0].push_back("casa");
+	profiles[1].push_back("carro");
+	profiles[2].push_back("perro");
+
 
 	sequences.push_back("casa");
 	sequences.push_back("carro");

@@ -17,49 +17,59 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 	char* query;
 	char* target;
-
-	if (this->Tree.size() >= 2)
+	while (this->Tree.size() != 1)
 	{
-		auto& c1 = this->Tree.front();
-		this->Tree.pop();
-		auto& c2 = this->Tree.front();
-		this->Tree.pop();
 
 
-		string s1 = sequences[c1.index_i];
-		string s2 = sequences[c2.index_i];
-
-
-		if (c1.size == 1 && c2.size == 1)
+		if (this->Tree.size() >= 2)
 		{
-			query = static_cast<char*>(malloc(sizeof(char) * (s1.size() + 1)));
-			target = static_cast<char*>(malloc(sizeof(char) * (s1.size() + 1)));
-
-			copy(s1.begin(), s1.end(), query);
-			query[s1.size()] = '\0';
-			copy(s2.begin(), s2.end(), target);
-			target[s2.size()] = '\0';
-
-			EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
-
-			merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
-
-			update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
-
-			update_profile(profiles, c1.index_i, s1, s2, result.alignment, result.alignmentLength);
+			auto& c1 = this->Tree.front();
+			this->Tree.pop();
+			auto& c2 = this->Tree.front();
+			this->Tree.pop();
 
 
+			string s1 = sequences[c1.index_i];
+			string s2 = sequences[c2.index_i];
+
+
+			if (c1.size == 1 && c2.size == 1)
+			{
+				query = static_cast<char*>(malloc(sizeof(char) * (s1.size() + 1)));
+				target = static_cast<char*>(malloc(sizeof(char) * (s1.size() + 1)));
+
+				copy(s1.begin(), s1.end(), query);
+				query[s1.size()] = '\0';
+				copy(s2.begin(), s2.end(), target);
+				target[s2.size()] = '\0';
+
+				EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+
+				merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
+
+				update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
+
+				update_profile(profiles, c1.index_i, s1, s2, result.alignment, result.alignmentLength);
+
+				free(query);
+				//free(target);
+				edlibFreeAlignResult(result);
+
+			}
+			else
+			{
+
+				merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
+
+				update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
+
+				update_profile_multiple(profiles, c1.index_i, c2.index_i);
+			}
 		}
-		else
-		{
 
-			merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
-
-			update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
-
-			update_profile_multiple(profiles, c1.index_i, c2.index_i);
-		}
 	}
+
+
 }
 
 void NJ::init(size_t size)
@@ -127,7 +137,9 @@ void NJ::update_profile_multiple(vector<vector<string>>& profiles, int id_profil
 
 	vector<string> profile;
 
+	profile = align_alignments(profiles[id_profile2], profiles[id_profile1]);
 
+	profiles[id_profile1] = profile;
 
 
 }
@@ -146,15 +158,231 @@ void NJ::update_dist_matrix(vector<vector<int>>& dist_matrix, int i_id, int valu
 
 int NJ::score(vector<string> prof1, vector<string> prof2, int row, int col)
 {
-	return 0;
+	int score = 0;
+
+	if (prof1.size() > 2 && prof2.size() > 2)
+	{
+		score += prof1[0][row] == prof2[0][col] ? 1 : -1;
+		score += prof1[0][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -1;
+		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+
+		score += prof1[prof1.size() - 1][row] == prof2[0][col] ? 1 : -1;
+		score += prof1[prof1.size() - 1][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -1;
+		score += prof1[prof1.size() - 1][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 1 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+
+
+	}
+	else
+	{
+		score += prof1[0][row] == prof2[0][col] ? 1 : -1;
+		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 1 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+
+	}
+	return score;
 }
 
 vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profile2)
 {
 
-	vector<string> result();
 
 
-	
-	
+	auto size1 = profil1[0].size();
+	auto size2 = profile2[0].size();
+
+	vector<string> result(profile2.size() + profil1.size());
+
+	vector<vector<int>> matrix(size1 + 1);
+
+	vector<vector<int>> step_trace_back(size1 + 1);
+
+	vector<int>trace_back;
+
+
+	// ReSharper disable once CppUseAuto
+	for (size_t i = 0; i < size1 + 1; i++)
+	{
+		matrix[i].resize(size2 + 1);
+		step_trace_back[i].resize(size2 + 1);
+	}
+
+	matrix[0][0] = 0;
+	step_trace_back[0][0] = 0;
+
+	for (size_t i = 1; i < size1 + 1; i++)
+	{
+		matrix[i][0] = i * -1;
+		step_trace_back[i][0] = i * -1;
+
+		if (i <= size2)
+		{
+			matrix[0][i] = i * -1;
+			step_trace_back[0][i] = i * -1;
+		}
+	}
+
+
+
+	int aux[3];
+
+	for (size_t i = 1; i < size1 + 1; i++)
+		for (size_t j = 1; j < size2 + 1; j++)
+		{
+
+
+			aux[0] = score(profil1, profile2, i - 1, j);
+			aux[1] = score(profil1, profile2, i, j - 1);
+			aux[2] = score(profil1, profile2, i - 1, j - 1);
+
+
+			if (aux[2] >= aux[1])
+			{
+				if (aux[2] >= aux[0])
+				{
+					matrix[i][j] = aux[2];
+
+					step_trace_back[i][j] = 0;
+				}
+				else
+				{
+					matrix[i][j] = aux[0];
+
+					step_trace_back[i][j] = 1;
+				}
+			}
+			else
+			{
+				if (aux[1] >= aux[0])
+				{
+					matrix[i][j] = aux[1];
+
+					step_trace_back[i][j] = 2;
+				}
+				else
+				{
+					matrix[i][j] = aux[0];
+
+					step_trace_back[i][j] = 1;
+				}
+			}
+
+
+
+
+		}
+
+	trace_back = build_trace_back(step_trace_back);
+
+	int x = 0;
+	int y = 0;
+
+
+	for (size_t i = 0; i < trace_back.size(); i++)
+	{
+		switch (trace_back[i])
+		{
+		case 1:
+		{
+
+			for (size_t j = 0; j < result.size(); j++)
+			{
+				if (j < profil1.size())
+				{
+					result[j].push_back(profil1[j][x]);
+				}
+				else
+				{
+
+					result[j].push_back('-');
+				}
+
+			}
+			x++;
+		}
+
+		case 2:
+		{
+
+			for (size_t j = 0; j < result.size(); j++)
+			{
+				if (j < profil1.size())
+				{
+					result[j].push_back('-');
+				}
+				else
+				{
+
+					result[j].push_back(profile2[j - profil1.size()][y]);
+				}
+
+			}
+			y++;
+		}
+
+		default:
+		{
+			for (size_t j = 0; j < result.size(); j++)
+			{
+				if (j < profil1.size())
+				{
+					result[j].push_back(profil1[j][x]);
+				}
+				else
+				{
+
+					result[j].push_back(profile2[j - profil1.size()][y]);
+				}
+
+			}
+			x++;
+			y++;
+
+		}
+		}
+	}
+
+	return  result;
+}
+
+
+vector<int> NJ::build_trace_back(vector<vector<int>> steps_matrix)
+{
+	vector<int> trace;
+
+	size_t i = steps_matrix.size() - 1;
+	size_t j = steps_matrix[0].size() - 1;
+
+	while (i != 0 && j != 0)
+	{
+		switch (steps_matrix[i][j])
+		{
+		case 1:
+		{
+
+			trace.push_back(steps_matrix[i][j]);
+			i--;
+		}
+		case 2:
+		{
+			trace.push_back(steps_matrix[i][j]);
+			j--;
+		}
+		default:
+		{
+			trace.push_back(steps_matrix[i][j]);
+			i--;
+			j--;
+		}
+		}
+	}
+
+	reverse(trace.begin(), trace.end());
+
+	return trace;
 }
