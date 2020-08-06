@@ -450,6 +450,8 @@ size_t NJ::load_data(vector<string>& sequences, string file_name)
 			continue;
 
 		seq += s;
+		sequences.push_back(seq);
+		seq.clear();
 	}
 
 	if (!seq.empty())
