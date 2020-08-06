@@ -41,6 +41,8 @@ public:
 
 	void init_data(vector<string>& sequences, vector<vector<string>>& profiles, string path);
 
+	static size_t load_data(vector<string>& sequences, string file_name);
+
 
 
 

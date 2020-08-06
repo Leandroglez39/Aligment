@@ -47,21 +47,43 @@ int main()
 
 	auto instance = Tools();
 
-	clock_t start = clock();
+	/*auto start = clock();
 
-	gt.init_data(sequences, profiles, "data1.txt");
+	gt.init_data(sequences, profiles, "data2.txt");
 
 	cout << "Init Data OK en: ";
-	cout << double(clock() - start) / (double)CLOCKS_PER_SEC << " seconds." << endl;
+	cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+
+	start = clock();
 
 	auto m = instance.calculate_dist_matrix(sequences);
 
+	cout << "Distance Matrix OK en: ";
+	cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
+	start = clock();
 
 	gt.run(sequences, m, profiles);
 
+	cout << "Ordenamiento OK en: ";
+	cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;*/
 
-	cout << "OK";
+	char* a;
+	long c = 0;
+	string str = "hola mundo";
+
+	for (size_t i = 0; i < 100000; i++)
+	{
+		char* writable = new char[str.size() + 1];
+		copy(str.begin(), str.end(), writable);
+		writable[str.size()] = '\0'; // don't forget the terminating 0
+
+		// don't forget to free the string after finished using it
+		delete[] writable;
+	}
+
+	cout << c << " OK";
 
 }
 

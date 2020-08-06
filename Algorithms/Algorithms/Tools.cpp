@@ -228,8 +228,7 @@ void Tools::create_trazas(const int size)
 
 vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 {
-	char* query;
-	char* target;
+
 	string s1;
 	string s2;
 
@@ -247,8 +246,8 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 			s1 = sequences[i];
 			s2 = sequences[j_size];
 
-			query = static_cast<char*>(calloc(sequences[i].size() + 1, sizeof(char)));
-			target = static_cast<char*>(calloc(sequences[j_size].size() + 1, sizeof(char)));
+			char* query = new char[sequences[i].size() + 1];
+			char* target = new char[sequences[j_size].size() + 1];
 
 			copy(s1.begin(), s1.end(), query);
 			query[s1.size()] = '\0';
@@ -257,8 +256,8 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 
 			EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
-			free(query);
-			free(target);
+			delete[] query;
+			delete[] target;
 
 			matrix[i][j_size] = result.editDistance;
 			matrix[j_size][i] = result.editDistance;
