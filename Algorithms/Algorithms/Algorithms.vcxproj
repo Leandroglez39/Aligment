@@ -150,13 +150,16 @@
     <ClCompile Include="Nj.cpp" />
     <ClCompile Include="normal-NW.cpp" />
     <ClCompile Include="Tools.cpp" />
+    <ClCompile Include="_editdistance.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="def.h" />
     <ClInclude Include="edlib.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Nj.h" />
     <ClInclude Include="normal-NW.h" />
     <ClInclude Include="Tools.h" />
+    <ClInclude Include="_editdistance.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -36,6 +36,9 @@
     <ClCompile Include="normal-NW.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="_editdistance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="edlib.h">
@@ -51,6 +54,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tools.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="_editdistance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

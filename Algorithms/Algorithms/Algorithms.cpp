@@ -2,15 +2,33 @@
 
 #include <algorithm>
 #include <iostream>
+#include <windows.h>
 #include "edlib.h"
 #include "Nj.h"
 #include "Tools.h"
+#include "_editdistance.h"
+#include <omp.h>
+
 
 using namespace std;
 
 void printAlignment(const char* query, const char* target,
 	const unsigned char* alignment, const int alignmentLength,
 	const int position, const EdlibAlignMode modeCode);
+
+long long foo(int64_t* a, int64_t* b, size_t i, size_t j);
+
+struct tup
+{
+	int64_t* h;
+	int64_t* q;
+
+	tup(int64_t* h, int64_t* q)
+	{
+		this->h = h;
+		this->q = q;
+	}
+};
 
 int main()
 {
@@ -53,19 +71,111 @@ int main()
 
 	size_t c = NJ::load_data(sequences, "data2.txt");
 
-	gt.init_clusters(c);
+	//gt.init_clusters(c);
 
-	cout << "Init Data OK en: ";
-	cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+	std::cout << "Init Data OK en: ";
+	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
 
+
+
+	/*string s1 = sequences[23];
+	string s2 = sequences[23];*/
+
+	vector<vector<int>> matrix(sequences.size());
+
+	for (size_t i = 0; i < sequences.size(); i++)
+		matrix[i].resize(sequences.size());
+
+
+	/*char* query = new char[s1.size() + 1];
+	char* target = new char[s2.size() + 1];
+
+	copy(s1.begin(), s1.end(), query);
+	query[s1.size()] = '\0';
+	copy(s2.begin(), s2.end(), target);
+	target[s2.size()] = '\0';
+
+	EdlibAlignResult result;
+	long cc = 0;*/
+
+	/*string s1 = "holaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholahola";
+	string s2 = "holaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholahola";*/
+
+
+	/*string s1 = sequences[0];
+	string s2 = sequences[1];
+
+	int64_t* query = new int64_t[s1.size() + 1];
+	int64_t* target = new int64_t[s2.size() + 1];
+
+	copy(s1.begin(), s1.end(), query);
+	query[s1.size()] = '\0';
+	copy(s2.begin(), s2.end(), target);
+	target[s2.size()] = '\0';*/
+
+
+
+
+	omp_set_num_threads(4);
 
 	start = clock();
+	//auto cc = edit_distance(query, s1.size(), target, s2.size());;
+	int64_t* query = new int64_t[1400];
+	int64_t* target = new int64_t[1400];
+	long cc = 0;
+	string s1;
+	string s2;
+	//#pragma omp parallel for collapse(2)
+	for (int i = 0; i < sequences.size(); i++)
+		for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
+		{
 
-	auto m = instance.calculate_dist_matrix(sequences);
 
-	cout << "Distance Matrix OK en: ";
-	cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+
+
+
+			s1 = sequences[i];
+			s2 = sequences[j_size];
+
+
+			move(s1.begin(), s1.end(), query);
+			query[s1.size()] = '\0';
+			move(s2.begin(), s2.end(), target);
+			target[s2.size()] = '\0';
+
+			//cc += foo(query, target, s1.size(), s2.size());
+
+			//int64_t* query = new int64_t[s1.size() + 1];
+			//int64_t* target = new int64_t[s2.size() + 1];
+
+			//copy(s1.begin(), s1.end(), query);
+			//query[s1.size()] = '\0';
+			//copy(s2.begin(), s2.end(), target);
+			//target[s2.size()] = '\0';
+
+
+			//matrix[i][j_size] = edit_distance(query, s1.size(), target, s2.size());
+
+
+
+			//cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+		}
+	delete[] query;
+	delete[] target;
+	std::cout << "Distance Matrix OK en: ";
+	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+
+
+	/*result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+	edlibFreeAlignResult(result);*/
+
+	//auto m = Tools::calculate_dist_matrix(sequences);
+
+
 
 	/*
 	start = clock();
@@ -76,8 +186,9 @@ int main()
 	cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;*/
 
 
+	//auto a = myersCalcEditDistanceNW
 
-	cout << " OK";
+	std::cout << " OK";
 
 }
 
@@ -129,4 +240,16 @@ void printAlignment(const char* query, const char* target,
 		}
 		printf(" (%d - %d)\n\n", max(startQIdx, 0), qIdx);
 	}
+}
+
+long long foo(int64_t* a, int64_t* b, size_t ii, size_t jj)
+{
+
+	for (size_t i = 0; i < ii; i++)
+		for (size_t j = 0; j < jj; j++)
+			auto g = b[i];
+
+	auto s = tup(a, b);
+
+	return 1;
 }

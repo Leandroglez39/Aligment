@@ -237,8 +237,8 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 	for (size_t i = 0; i < sequences.size(); i++)
 		matrix[i].resize(sequences.size());
 
+	EdlibAlignResult result{};
 
-	matrix[0][0];
 
 	for (size_t i = 0; i < sequences.size(); i++)
 		for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
@@ -254,16 +254,17 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 			copy(s2.begin(), s2.end(), target);
 			target[s2.size()] = '\0';
 
-			EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+			result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
 			delete[] query;
 			delete[] target;
 
 			matrix[i][j_size] = result.editDistance;
 			matrix[j_size][i] = result.editDistance;
-			edlibFreeAlignResult(result);
+
 		}
 
+	edlibFreeAlignResult(result);
 	return matrix;
 
 }
