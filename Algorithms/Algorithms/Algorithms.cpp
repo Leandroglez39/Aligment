@@ -71,7 +71,7 @@ int main()
 
 	//gt.init_data(sequences, profiles, "data2.txt");
 
-	size_t c = NJ::load_data(sequences, "data5.txt");
+	size_t c = NJ::load_data(sequences, "data2.txt");
 
 	//gt.init_clusters(c);
 
@@ -84,10 +84,7 @@ int main()
 	/*string s1 = sequences[23];
 	string s2 = sequences[23];*/
 
-	vector<vector<int>> matrix(sequences.size());
 
-	for (size_t i = 0; i < sequences.size(); i++)
-		matrix[i].resize(sequences.size());
 
 
 	/*char* query = new char[s1.size() + 1];
@@ -117,58 +114,79 @@ int main()
 	target[s2.size()] = '\0';*/
 
 
+	vector<string> sequencess = { "hola","perro","casa" };
 
+	vector<vector<int>> matrix(sequences.size());
+
+	for (size_t i = 0; i < sequences.size(); i++)
+		matrix[i].resize(sequences.size());
 
 	omp_set_num_threads(4);
 
 	start = clock();
 	//auto cc = edit_distance(query, s1.size(), target, s2.size());;
-	int64_t* query = new int64_t[10001];
-	int64_t* target = new int64_t[10001];
+	int64_t* query = new int64_t[1400];
+	int64_t* target = new int64_t[1400];
+	//auto* query = new char[52];
+	//auto* target = new char[52];
 	long cc = 0;
-	string s1 = sequences[0];
-	string s2 = sequences[1];
-	//#pragma omp parallel for collapse(2)
-	//for (int i = 0; i < sequences.size(); i++)
-	//	for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
-	//	{
+	string s1;
+	string s2;
+	size_t j_size;
+
+#pragma omp parallel for collapse(2) private(s1,s2)
+	for (int i = 0; i < sequences.size(); i++)
+		for (j_size = i + 1; j_size < sequences.size(); j_size++)
+		{
 
 
 
 
 
 
-	//		s1 = sequences[i];
-	//		s2 = sequences[j_size];
+			s1 = sequences[i];
+			s2 = sequences[j_size];
 
+#pragma omp critical
+			{
+				move(s1.begin(), s1.end(), query);
+				query[s1.size()] = '\0';
+				move(s2.begin(), s2.end(), target);
+				target[s2.size()] = '\0';
+			}
+			//cc += foo(query, target, s1.size(), s2.size());
 
-	//		move(s1.begin(), s1.end(), query);
-	//		query[s1.size()] = '\0';
-	//		move(s2.begin(), s2.end(), target);
-	//		target[s2.size()] = '\0';
-
-	//		//cc += foo(query, target, s1.size(), s2.size());
-
-	//		//int64_t* query = new int64_t[s1.size() + 1];
-	//		//int64_t* target = new int64_t[s2.size() + 1];
-
-
-
-
-	//		matrix[i][j_size] = edit_distance(query, s1.size(), target, s2.size());
+			//int64_t* query = new int64_t[s1.size() + 1];
+			//int64_t* target = new int64_t[s2.size() + 1];
 
 
 
-	//		//cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
-
-	//	}
-	//delete[] query;
-	//delete[] target;
-	//std::cout << "Distance Matrix OK en: ";
-	//std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+			const auto t = edit_distance(query, s1.size(), target, s2.size());
+			//const auto t = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
+			matrix[i][j_size] = t;
+			matrix[j_size][i] = t;
 
 
-	auto* queryc = new char[10001];
+			//cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+		}
+	delete[] query;
+	delete[] target;
+	std::cout << "Distance Matrix OK en: ";
+	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+
+	/*for (size_t i = 0; i < sequencess.size(); i++)
+	{
+		for (size_t j = 0; j < sequencess.size(); j++)
+		{
+			cout << matrix[i][j] << " ";
+
+		}
+		cout << "\n";
+	}*/
+
+	/*auto* queryc = new char[10001];
 	auto* targetc = new char[10001];
 
 	move(s1.begin(), s1.end(), queryc);
@@ -201,12 +219,12 @@ int main()
 
 	last = std::chrono::system_clock::now() - begin;
 	copyTime = std::chrono::duration<double>(last).count();
-	std::cout << "    edit_dist = " << dd << " en: " << copyTime << " sec" << std::endl;
+	std::cout << "    edit_dist = " << dd << " en: " << copyTime << " sec" << std::endl;*/
 
 	//auto m = Tools::calculate_dist_matrix(sequences);
 
-	delete[] query;
-	delete[] target;
+	/*delete[] query;
+	delete[] target;*/
 
 	/*
 	start = clock();
