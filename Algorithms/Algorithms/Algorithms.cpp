@@ -1,6 +1,8 @@
 
 
 #include <algorithm>
+#include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <windows.h>
 #include "edlib.h"
@@ -69,7 +71,7 @@ int main()
 
 	//gt.init_data(sequences, profiles, "data2.txt");
 
-	size_t c = NJ::load_data(sequences, "data2.txt");
+	size_t c = NJ::load_data(sequences, "data5.txt");
 
 	//gt.init_clusters(c);
 
@@ -121,61 +123,90 @@ int main()
 
 	start = clock();
 	//auto cc = edit_distance(query, s1.size(), target, s2.size());;
-	int64_t* query = new int64_t[1400];
-	int64_t* target = new int64_t[1400];
+	int64_t* query = new int64_t[10001];
+	int64_t* target = new int64_t[10001];
 	long cc = 0;
-	string s1;
-	string s2;
+	string s1 = sequences[0];
+	string s2 = sequences[1];
 	//#pragma omp parallel for collapse(2)
-	for (int i = 0; i < sequences.size(); i++)
-		for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
-		{
+	//for (int i = 0; i < sequences.size(); i++)
+	//	for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
+	//	{
 
 
 
 
 
 
-			s1 = sequences[i];
-			s2 = sequences[j_size];
+	//		s1 = sequences[i];
+	//		s2 = sequences[j_size];
 
 
-			move(s1.begin(), s1.end(), query);
-			query[s1.size()] = '\0';
-			move(s2.begin(), s2.end(), target);
-			target[s2.size()] = '\0';
+	//		move(s1.begin(), s1.end(), query);
+	//		query[s1.size()] = '\0';
+	//		move(s2.begin(), s2.end(), target);
+	//		target[s2.size()] = '\0';
 
-			//cc += foo(query, target, s1.size(), s2.size());
+	//		//cc += foo(query, target, s1.size(), s2.size());
 
-			//int64_t* query = new int64_t[s1.size() + 1];
-			//int64_t* target = new int64_t[s2.size() + 1];
-
-			//copy(s1.begin(), s1.end(), query);
-			//query[s1.size()] = '\0';
-			//copy(s2.begin(), s2.end(), target);
-			//target[s2.size()] = '\0';
-
-
-			//matrix[i][j_size] = edit_distance(query, s1.size(), target, s2.size());
+	//		//int64_t* query = new int64_t[s1.size() + 1];
+	//		//int64_t* target = new int64_t[s2.size() + 1];
 
 
 
-			//cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
-		}
-	delete[] query;
-	delete[] target;
-	std::cout << "Distance Matrix OK en: ";
-	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+	//		matrix[i][j_size] = edit_distance(query, s1.size(), target, s2.size());
 
 
 
-	/*result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
-	edlibFreeAlignResult(result);*/
+	//		//cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+	//	}
+	//delete[] query;
+	//delete[] target;
+	//std::cout << "Distance Matrix OK en: ";
+	//std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+
+	auto* queryc = new char[10001];
+	auto* targetc = new char[10001];
+
+	move(s1.begin(), s1.end(), queryc);
+	queryc[s1.size()] = '\0';
+	move(s2.begin(), s2.end(), targetc);
+	targetc[s2.size()] = '\0';
+
+	std::cout << std::fixed << std::setprecision(10);
+	auto begin = std::chrono::system_clock::now();
+
+	auto dd = edlibAlign(queryc, s1.size(), targetc, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
+
+	auto last = std::chrono::system_clock::now() - begin;
+	auto copyTime = std::chrono::duration<double>(last).count();
+	std::cout << "    Edlib = " << dd << " en: " << copyTime << " sec" << std::endl;
+	delete[] queryc;
+	delete[] targetc;
+
+	s1 = sequences[0];
+	s2 = sequences[1];
+
+	move(s1.begin(), s1.end(), query);
+	query[s1.size()] = '\0';
+	move(s2.begin(), s2.end(), target);
+	target[s2.size()] = '\0';
+
+	begin = std::chrono::system_clock::now();
+
+	dd = edit_distance(query, s1.size(), target, s2.size());
+
+	last = std::chrono::system_clock::now() - begin;
+	copyTime = std::chrono::duration<double>(last).count();
+	std::cout << "    edit_dist = " << dd << " en: " << copyTime << " sec" << std::endl;
 
 	//auto m = Tools::calculate_dist_matrix(sequences);
 
-
+	delete[] query;
+	delete[] target;
 
 	/*
 	start = clock();
