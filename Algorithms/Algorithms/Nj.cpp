@@ -23,8 +23,13 @@ void NJ::merge(Cluster& a, Cluster& b, int dist_between)
 void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector<vector<string>>& profiles)
 {
 
-	char* query;
-	char* target;
+	char* query = new char[1400];
+	char* target = new char[1400];
+	string s1;
+	string s2;
+	EdlibAlignResult result;
+
+
 	while (this->Tree.size() != 1)
 	{
 
@@ -37,24 +42,20 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 			this->Tree.pop();
 
 
-			string s1 = sequences[c1.index_i];
-			string s2 = sequences[c2.index_i];
+			s1 = sequences[c1.index_i];
+			s2 = sequences[c2.index_i];
 
 
 			if (c1.size == 1 && c2.size == 1)
 			{
-				//cout << "Por Memoria\n";
-				query = static_cast<char*>(calloc(s1.size() + 1, sizeof(char)));
-				//cout << "Query\n";
-				target = static_cast<char*>(calloc((s1.size() + 1), sizeof(char)));
-				//cout << "target\n";
 
-				copy(s1.begin(), s1.end(), query);
+
+				move(s1.begin(), s1.end(), query);
 				query[s1.size()] = '\0';
-				copy(s2.begin(), s2.end(), target);
+				move(s2.begin(), s2.end(), target);
 				target[s2.size()] = '\0';
 
-				EdlibAlignResult result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+				result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
 				//cout << "Muero en Merge \n";
 				merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
@@ -66,8 +67,6 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 				//cout << c1.index_i << "-" << s1 << " " << s2 << "\n";
 				update_profile(profiles, c1.index_i, s1, s2, result.alignment, result.alignmentLength);
 
-				free(query);
-				free(target);
 				edlibFreeAlignResult(result);
 
 			}
@@ -86,6 +85,9 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 	}
 
+	delete[] query;
+	delete[] target;
+
 
 }
 
@@ -93,7 +95,8 @@ void NJ::init_clusters(size_t size)
 {
 	auto c1 = Cluster();
 
-	for (size_t i = 0; i < size; i++)
+
+	for (int i = 0; i < size; i++)
 	{
 		c1.sum_distances = 0;
 		c1.size = 1;
@@ -415,9 +418,15 @@ void NJ::init_data(vector<string>& sequences, vector<vector<string>>& profiles, 
 	auto& text = sequences;
 	auto& profile = profiles;
 
-	text = input::read_sequence(path, profile);
+	auto size = load_data(text, path);
 
-	init_clusters(sequences.size());
+	profile.resize(size);
+
+#pragma omp parallel for
+	for (int i = 0; i < size; i++)
+		profile[i].push_back(text[i]);
+
+	
 
 
 }

@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 #include "edlib.h"
+#include "_editdistance.h"
 
 
 string* Tools::trazas;
@@ -228,43 +229,60 @@ void Tools::create_trazas(const int size)
 
 vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 {
+	omp_set_num_threads(4);
 
 	string s1;
 	string s2;
 
 	vector<vector<int>> matrix(sequences.size());
 
-	for (size_t i = 0; i < sequences.size(); i++)
+	//#pragma omp parallel for
+	for (int i = 0; i < sequences.size(); i++)
 		matrix[i].resize(sequences.size());
 
-	EdlibAlignResult result{};
 
+	int64_t* query = new int64_t[1400];
+	int64_t* target = new int64_t[1400];
 
-	for (size_t i = 0; i < sequences.size(); i++)
-		for (size_t j_size = i + 1; j_size < sequences.size(); j_size++)
+	//#pragma omp parallel for private(s1,s2) collapse(2) 
+	for (int i = 0; i < sequences.size(); i++)
+		for (int j_size = i + 1; j_size < sequences.size(); j_size++)
 		{
+
+
+
+
 			s1 = sequences[i];
 			s2 = sequences[j_size];
 
-			char* query = new char[sequences[i].size() + 1];
-			char* target = new char[sequences[j_size].size() + 1];
+#pragma omp critical
+			{
+				move(s1.begin(), s1.end(), query);
+				query[s1.size()] = '\0';
+				move(s2.begin(), s2.end(), target);
+				target[s2.size()] = '\0';
+			}
 
-			copy(s1.begin(), s1.end(), query);
-			query[s1.size()] = '\0';
-			copy(s2.begin(), s2.end(), target);
-			target[s2.size()] = '\0';
 
-			result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
-			delete[] query;
-			delete[] target;
 
-			matrix[i][j_size] = result.editDistance;
-			matrix[j_size][i] = result.editDistance;
+			const auto t = edit_distance(query, s1.size(), target, s2.size());
+
+			//const auto t = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
+
+
+			matrix[i][j_size] = t;
+			matrix[j_size][i] = t;
+
+
+
+
 
 		}
 
-	edlibFreeAlignResult(result);
+	delete[] query;
+	delete[] target;
+	//edlibFreeAlignResult(result);
 	return matrix;
 
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -11,7 +13,10 @@ public:
 
 	static std::string* read_file2(const std::string& path, const unsigned size);
 
-	static  vector<string> read_sequence(string path, vector<vector<string>>& prof );
+	static  vector<string> read_sequence(string path, vector<vector<string>>& prof);
+
+	static bool save_alignment(const string& file_name, const vector<string> sequences);
+
 
 
 };

@@ -72,3 +72,25 @@ vector<string> input::read_sequence(string path, vector<vector<string>>& prof)
 	return sequences;
 
 }
+
+bool input::save_alignment(const string& file_name, const vector<string> sequences)
+{
+
+	ofstream outfile;
+
+
+	outfile.open(file_name);
+
+
+	string s;
+	string id;
+
+	for (auto p : sequences)
+	{
+		outfile << p << "\n";
+	}
+
+	outfile.close();
+
+	return true;
+}
