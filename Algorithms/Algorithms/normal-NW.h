@@ -6,9 +6,9 @@
 
 using namespace std;
 
-vector<vector<int>> needleman_wunsch(const string& s1, const string& s2, const int size, const int match, const int dismatch, const int gap);
+vector<vector<int>> needleman_wunsch(const string& s1, const string& s2, const int size_i, const int size_j, const int match, const int dismatch, const int gap);
 
-vector<string> back_trace(const string& s1, const string& s2, vector<vector<int>> matrix, int size);
+vector<string> back_trace(const string& s1, const string& s2, vector<vector<int>> matrix);
 
 vector<vector<int>> needleman_wunsch_parallel(const string& s1, const string& s2, const int size, const int match, const int dismatch, const int gap);
 

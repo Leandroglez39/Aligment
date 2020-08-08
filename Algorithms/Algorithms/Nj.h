@@ -31,6 +31,8 @@ public:
 
 	static void update_profile(vector<vector<string>>& profiles, int id_profile, string s1, string s2, vector<int> alignment, int length_alignment);
 
+	static void update_profile3(vector<vector<string>>& profiles, int id_profile, vector<string> alignment);
+
 	static void update_profile_multiple(vector<vector<string>>& profiles, int id_profile1, int id_profile2);
 
 	static void update_dist_matrix(vector<vector<int>>& dist_matrix, int i_id, int value);

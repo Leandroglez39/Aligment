@@ -27,8 +27,8 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 	char* target = new char[1400];
 	string s1;
 	string s2;
-	vector<int> result;
-
+	vector<vector<int>> matrix;
+	vector<string> result;
 
 	while (this->Tree.size() != 1)
 	{
@@ -57,7 +57,9 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 				//result = edlibAlign(query, sequences[c1.index_i].size(), target, sequences[c2.index_i].size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
 
-				result = parallel_needleman_wunsch(s1, s2, s1.size(), s2.size(), 1, -1, -1);
+				matrix = needleman_wunsch(s1, s2, s1.size(), s2.size(), 1, -1, -1);
+
+				result = back_trace(s1, s2, matrix);
 
 				//cout << "Muero en Merge \n";
 				merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
@@ -67,7 +69,7 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 				//cout << "Muero en update profile\n";
 				//cout << c1.index_i << "-" << s1 << " " << s2 << "\n";
-				update_profile(profiles, c1.index_i, s1, s2, result, result.size());
+				update_profile3(profiles, c1.index_i, result);
 
 				//edlibFreeAlignResult(result);
 
@@ -202,6 +204,18 @@ void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string
 	profiles[id_profile] = profile;
 
 }
+
+void NJ::update_profile3(vector<vector<string>>& profiles, int id_profile, vector<string> alignment)
+{
+	vector<string> profile;
+
+	for (auto x : alignment)
+		profile.push_back(x);
+
+	profiles[id_profile] = profile;
+
+}
+
 
 void NJ::update_profile_multiple(vector<vector<string>>& profiles, int id_profile1, int id_profile2)
 {

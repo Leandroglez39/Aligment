@@ -7,32 +7,48 @@
 
 
 
-vector<vector<int>> needleman_wunsch(const string& s1, const string& s2, const int size, const int match, const int dismatch, const int gap)
+vector<vector<int>> needleman_wunsch(const string& s1, const string& s2, const int size1, const int size2, const int match, const int dismatch, const int gap)
 {
 
-	vector<vector<int>> matrix(size + 1);
+	vector<vector<int>> matrix(size1 + 1);
 
-	vector<int> acumulado(size);
 
-	long count_operation = 0;
+
 
 	// ReSharper disable once CppUseAuto
-	for (int i = 0; i < size + 1; i++)
-		matrix[i].resize(size + 1);
+	for (int i = 0; i < size1 + 1; i++)
+		matrix[i].resize(size2 + 1);
 
 	matrix[0][0] = 0;
 
-	for (int i = 1; i < size + 1; i++)
+	auto a = size1 >= size2 ? size1 : size2;
+
+
+#pragma omp parallel for
+	for (int i = 1; i < a + 1; i++)
 	{
-		matrix[0][i] = i * gap;
-		matrix[i][0] = i * gap;
+
+		if (i <= size1)
+		{
+			matrix[i][0] = i * gap;
+		}
+
+		if (i <= size2)
+		{
+			matrix[0][i] = i * gap;
+		}
+
+
+
+
+
 	}
 
 
 	int aux[3];
 
-	for (int i = 1; i < size + 1; i++)
-		for (int j = 1; j < size + 1; j++)
+	for (int i = 1; i < size1 + 1; i++)
+		for (int j = 1; j < size2 + 1; j++)
 		{
 
 
@@ -41,7 +57,7 @@ vector<vector<int>> needleman_wunsch(const string& s1, const string& s2, const i
 			if (s1[i - 1] == s2[j - 1]) {
 
 				matrix[i][j] = matrix[i - 1][j - 1] + match;
-				count_operation++;
+
 
 			}
 			else
@@ -51,20 +67,20 @@ vector<vector<int>> needleman_wunsch(const string& s1, const string& s2, const i
 				aux[2] = matrix[i - 1][j - 1] + dismatch;
 
 				matrix[i][j] = max(max(aux[0], aux[1]), aux[2]);
-				count_operation++;
+
 			}
 
 		}
 
 
-	cout << count_operation << "\n";
+
 	return matrix;
 
 
 
 }
 
-vector<string>  back_trace(const string& s1, const string& s2, vector<vector<int>> matrix, int size)
+vector<string>  back_trace(const string& s1, const string& s2, vector<vector<int>> matrix)
 {
 	vector<string> alignment(2);
 
@@ -72,8 +88,8 @@ vector<string>  back_trace(const string& s1, const string& s2, vector<vector<int
 	alignment[1] = "";
 
 
-	int i = size;
-	int j = size;
+	int i = matrix.size() - 1;
+	int j = matrix[0].size() - 1;
 	int gap_value = -1;
 
 	while (i != 0 && j != 0)

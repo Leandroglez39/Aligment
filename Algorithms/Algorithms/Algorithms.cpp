@@ -71,7 +71,7 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data1.txt");
+	gt.init_data(sequences, profiles, "data3.txt");
 
 	//size_t c = NJ::load_data(sequences, "data3.txt");
 
@@ -266,19 +266,19 @@ int main()
 		//auto a = myersCalcEditDistanceNW
 
 
-		/*int m = 0;
-		int index = 0;
-		for (int x = 0; x < profiles.size(); x++)
+	int m = 0;
+	int index = 0;
+	for (int x = 0; x < profiles.size(); x++)
+	{
+		if (profiles[x].size() > m)
 		{
-			if (profiles[x].size() > m)
-			{
-				m = profiles[x].size();
-				index = x;
-			}
+			m = profiles[x].size();
+			index = x;
 		}
-		auto p = profiles[index];
+	}
+	auto p = profiles[index];
 
-		input::save_alignment("alignment.txt", p);*/
+	input::save_alignment("alignment.txt", p);
 
 
 
