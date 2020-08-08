@@ -1,5 +1,5 @@
 #include "Nj.h"
-
+#include "normal-NW.h"
 
 
 #include <fstream>
@@ -27,7 +27,7 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 	char* target = new char[1400];
 	string s1;
 	string s2;
-	EdlibAlignResult result;
+	vector<int> result;
 
 
 	while (this->Tree.size() != 1)
@@ -50,12 +50,14 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 			{
 
 
-				move(s1.begin(), s1.end(), query);
+				/*move(s1.begin(), s1.end(), query);
 				query[s1.size()] = '\0';
 				move(s2.begin(), s2.end(), target);
-				target[s2.size()] = '\0';
+				target[s2.size()] = '\0';*/
 
-				result = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+				//result = edlibAlign(query, sequences[c1.index_i].size(), target, sequences[c2.index_i].size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+
+				result = parallel_needleman_wunsch(s1, s2, s1.size(), s2.size(), 1, -1, -1);
 
 				//cout << "Muero en Merge \n";
 				merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
@@ -67,7 +69,7 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 				//cout << c1.index_i << "-" << s1 << " " << s2 << "\n";
 				update_profile(profiles, c1.index_i, s1, s2, result.alignment, result.alignmentLength);
 
-				edlibFreeAlignResult(result);
+				//edlibFreeAlignResult(result);
 
 			}
 			else
@@ -426,7 +428,7 @@ void NJ::init_data(vector<string>& sequences, vector<vector<string>>& profiles, 
 	for (int i = 0; i < size; i++)
 		profile[i].push_back(text[i]);
 
-	
+
 
 
 }

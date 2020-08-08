@@ -3,6 +3,7 @@
 #include <iostream>
 #include "normal-NW.h"
 #include "omp.h"
+#include "Nj.h"
 
 
 
@@ -234,6 +235,173 @@ vector<vector<pair<int, int>>> diagonal_order(int row, int col)
 	}
 
 	return matrix;
+
+
+}
+
+vector<int> parallel_needleman_wunsch(const string& s1, const string& s2, const int size_row, const int size_col, const int match, const int dismatch, const int gap)
+{
+
+	omp_set_num_threads(omp_get_max_threads());
+
+	vector<vector<int>> matrix(size_row + 1);
+
+
+
+	vector<vector<int>> step_trace_back(size_row + 1);
+
+	vector<int>trace_back;
+
+#pragma omp parallel for
+	for (int i = 0; i < size_row + 1; i++)
+	{
+		matrix[i].resize(size_col + 1);
+		step_trace_back[i].resize(size_col + 1);
+	}
+	matrix[0][0] = 0;
+	step_trace_back[0][0] = 0;
+
+#pragma omp parallel for	
+	for (int i = 1; i < size_row + 1; i++)
+	{
+		if (i <= size_col)
+		{
+			matrix[0][i] = i * gap;
+			matrix[i][0] = i * gap;
+			step_trace_back[i][0] = 1;
+		}
+		else
+		{
+			matrix[i][0] = i * gap;
+			step_trace_back[0][i] = 2;
+		}
+	}
+
+
+	int aux[3];
+
+
+	for (int i = 1; i < size_row + 1; i++)
+	{
+#pragma omp parallel for private(i,aux) shared(matrix, step_trace_back)
+		for (int j = i, z = 1; j != 0 && z < size_col + 1; z++)
+		{
+			if (s1[j - 1] == s2[z - 1]) {
+
+				matrix[j][z] = matrix[j - 1][z - 1] + match;
+				step_trace_back[i][j] = 0;
+
+			}
+			else
+			{
+				aux[0] = matrix[j - 1][z] + gap;
+				aux[1] = matrix[j][z - 1] + gap;
+				aux[2] = matrix[j - 1][z - 1] + dismatch;
+
+
+				if (aux[2] >= aux[1])
+				{
+					if (aux[2] >= aux[0])
+					{
+						matrix[j][z] = aux[2];
+
+						step_trace_back[j][z] = 0;
+					}
+					else
+					{
+						matrix[j][z] = aux[0];
+
+						step_trace_back[j][z] = 1;
+					}
+				}
+				else
+				{
+					if (aux[1] >= aux[0])
+					{
+						matrix[j][z] = aux[1];
+
+						step_trace_back[j][z] = 2;
+					}
+					else
+					{
+						matrix[j][z] = aux[0];
+
+						step_trace_back[j][z] = 1;
+					}
+				}
+
+
+
+
+			}
+			j--;
+		}
+
+
+	}
+
+
+	for (int i = 2; i < size_row + 1; i++)
+	{
+#pragma omp parallel for private(i,aux) shared(matrix, step_trace_back)
+		for (int j = size_row, z = i; j != 0 && z < size_col + 1; j--)
+		{
+			if (s1[j - 1] == s2[z - 1]) {
+
+				matrix[j][z] = matrix[j - 1][z - 1] + match;
+				step_trace_back[j][z] = 0;
+
+			}
+			else
+			{
+				aux[0] = matrix[j - 1][z] + gap;
+				aux[1] = matrix[j][z - 1] + gap;
+				aux[2] = matrix[j - 1][z - 1] + dismatch;
+
+
+				if (aux[2] >= aux[1])
+				{
+					if (aux[2] >= aux[0])
+					{
+						matrix[j][z] = aux[2];
+
+						step_trace_back[j][z] = 0;
+					}
+					else
+					{
+						matrix[j][z] = aux[0];
+
+						step_trace_back[j][z] = 1;
+					}
+				}
+				else
+				{
+					if (aux[1] >= aux[0])
+					{
+						matrix[j][z] = aux[1];
+
+						step_trace_back[j][z] = 2;
+					}
+					else
+					{
+						matrix[j][z] = aux[0];
+
+						step_trace_back[j][z] = 1;
+					}
+				}
+
+			}
+			z++;
+		}
+
+
+	}
+
+	trace_back = NJ::build_trace_back(step_trace_back);
+
+
+	return trace_back;
+
 
 
 }

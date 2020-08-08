@@ -3,8 +3,15 @@
 #include <omp.h>
 #include <chrono>
 #include <iostream>
+#include <xlocmon>
+
+
+#include <sstream>
+#include <cstdint>
+
 #include "edlib.h"
 #include "_editdistance.h"
+
 
 
 string* Tools::trazas;
@@ -236,7 +243,7 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 
 	vector<vector<int>> matrix(sequences.size());
 
-	//#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < sequences.size(); i++)
 		matrix[i].resize(sequences.size());
 
@@ -244,7 +251,11 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 	int64_t* query = new int64_t[1400];
 	int64_t* target = new int64_t[1400];
 
-	//#pragma omp parallel for private(s1,s2) collapse(2) 
+	uint64_t value;
+	std::istringstream iss("18446744073709551610");
+	iss >> value;
+
+#pragma omp parallel for private(s1,s2) collapse(2) 
 	for (int i = 0; i < sequences.size(); i++)
 		for (int j_size = i + 1; j_size < sequences.size(); j_size++)
 		{
@@ -268,7 +279,7 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 
 			const auto t = edit_distance(query, s1.size(), target, s2.size());
 
-			//const auto t = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
+			//const auto t = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size()+1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
 
 
 			matrix[i][j_size] = t;
