@@ -280,12 +280,18 @@ vector<int> parallel_needleman_wunsch(const string& s1, const string& s2, const 
 
 	int aux[3];
 
+	int z = 1;
+	int j = 0;
 
 	for (int i = 1; i < size_row + 1; i++)
 	{
-#pragma omp parallel for private(i,aux) shared(matrix, step_trace_back)
-		for (int j = i, z = 1; j != 0 && z < size_col + 1; z++)
+#pragma omp parallel for private(aux) shared(i, matrix, step_trace_back)
+		for (j = i; j < 0; j--)
 		{
+			if (z >= size_col + 1)
+				break;
+
+
 			if (s1[j - 1] == s2[z - 1]) {
 
 				matrix[j][z] = matrix[j - 1][z - 1] + match;
@@ -334,18 +340,22 @@ vector<int> parallel_needleman_wunsch(const string& s1, const string& s2, const 
 
 
 			}
-			j--;
+			z++;
 		}
 
 
 	}
 
+	j = size_row;
 
 	for (int i = 2; i < size_row + 1; i++)
 	{
-#pragma omp parallel for private(i,aux) shared(matrix, step_trace_back)
-		for (int j = size_row, z = i; j != 0 && z < size_col + 1; j--)
+#pragma omp parallel for private(aux) shared(i, matrix, step_trace_back)
+		for (z = i; z < size_col + 1; z++)
 		{
+			if (j >= 0)
+				break;
+
 			if (s1[j - 1] == s2[z - 1]) {
 
 				matrix[j][z] = matrix[j - 1][z - 1] + match;
@@ -391,7 +401,7 @@ vector<int> parallel_needleman_wunsch(const string& s1, const string& s2, const 
 				}
 
 			}
-			z++;
+			j--;
 		}
 
 

@@ -67,7 +67,7 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 				//cout << "Muero en update profile\n";
 				//cout << c1.index_i << "-" << s1 << " " << s2 << "\n";
-				update_profile(profiles, c1.index_i, s1, s2, result.alignment, result.alignmentLength);
+				update_profile(profiles, c1.index_i, s1, s2, result, result.size());
 
 				//edlibFreeAlignResult(result);
 
@@ -109,8 +109,55 @@ void NJ::init_clusters(size_t size)
 	}
 }
 
-void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string s1, string s2,
+void NJ::update_profile2(vector<vector<string>>& profiles, int id_profile, string s1, string s2,
 	const unsigned char* alignment, int length_alignment)
+{
+	vector<string> profile;
+
+	string query;
+	string target;
+	int s1_index = 0;
+	int s2_index = 0;
+
+
+
+	for (auto i = 0; i < length_alignment; i++)
+	{
+		switch (alignment[i])
+		{
+		case 1:
+		{
+			query.push_back(s1[s1_index]);
+			target.push_back('-');
+			s1_index++;
+			break;
+		}
+		case 2:
+		{
+			target.push_back(s2[s2_index]);
+			query.push_back('-');
+			s2_index++;
+			break;
+		}
+		default:
+		{
+			query.push_back(s1[s1_index]);
+			target.push_back(s2[s2_index]);
+			s1_index++;
+			s2_index++;
+		}
+		}
+	}
+
+	profile.push_back(target);
+	profile.push_back(query);
+
+	profiles[id_profile] = profile;
+
+}
+
+void NJ::update_profile(vector<vector<string>>& profiles, int id_profile, string s1, string s2,
+	vector<int> alignment, int length_alignment)
 {
 	vector<string> profile;
 

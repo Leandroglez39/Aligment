@@ -27,7 +27,9 @@ public:
 
 	void init_clusters(size_t size);
 
-	static void update_profile(vector<vector<string>>& profiles, int id_profile, string s1, string s2, const unsigned char* alignment, int length_alignment);
+	static void update_profile2(vector<vector<string>>& profiles, int id_profile, string s1, string s2, const unsigned char* alignment, int length_alignment);
+
+	static void update_profile(vector<vector<string>>& profiles, int id_profile, string s1, string s2, vector<int> alignment, int length_alignment);
 
 	static void update_profile_multiple(vector<vector<string>>& profiles, int id_profile1, int id_profile2);
 

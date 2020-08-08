@@ -11,7 +11,7 @@
 #include "_editdistance.h"
 #include <omp.h>
 #include "Input.h"
-#include "normal-NW.h"
+
 
 
 using namespace std;
@@ -71,7 +71,7 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data3.txt");
+	gt.init_data(sequences, profiles, "data1.txt");
 
 	//size_t c = NJ::load_data(sequences, "data3.txt");
 
