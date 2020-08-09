@@ -6,7 +6,7 @@
 #include <xlocmon>
 #include <queue>
 
-priority_queue<int,int> a;
+
 
 
 
@@ -256,9 +256,6 @@ vector<vector<int>> Tools::calculate_dist_matrix(vector<string>& sequences)
 	int64_t* query = new int64_t[1400];
 	int64_t* target = new int64_t[1400];
 
-	uint64_t value;
-	std::istringstream iss("18446744073709551610");
-	iss >> value;
 
 #pragma omp parallel for private(s1,s2) collapse(2) 
 	for (int i = 0; i < sequences.size(); i++)
@@ -389,4 +386,39 @@ int Tools::levenshtein_parallel(const string& s1, const string& s2, int index1, 
 
 	heap.push(pair<int, pair<int, int>>(value * -1, tuple));
 	return value;
+}
+
+
+void Tools::seq_sort(vector<string>& sequences, vector<int>& check_seq, int& init, vector<string>& sequences_sorted, vector<vector<int>>& matrix)
+{
+	sequences_sorted.push_back(sequences[init]);
+
+	check_seq[init] = 1;
+
+	int index = init;
+	int max = 1400;
+	int index_j = init;
+
+	while (sequences_sorted.size() < sequences.size())
+	{
+
+
+		for (int j = 0; j < sequences.size(); j++)
+		{
+
+			if (j != index && check_seq[j] == 0 && matrix[index][j] < max)
+			{
+				max = matrix[index][j];
+				index_j = j;
+			}
+
+		}
+		sequences_sorted.push_back(sequences[index_j]);
+		check_seq[index_j] = 1;
+		index = index_j;
+
+		max = 1400;
+
+	}
+
 }

@@ -71,7 +71,7 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data1.txt");
+	gt.init_data(sequences, profiles, "data3.txt");
 
 	//size_t c = NJ::load_data(sequences, "data3.txt");
 
