@@ -4,6 +4,11 @@
 #include <chrono>
 #include <iostream>
 #include <xlocmon>
+#include <queue>
+
+priority_queue<int,int> a;
+
+
 
 
 #include <sstream>
