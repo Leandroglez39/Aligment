@@ -25,6 +25,8 @@ public:
 
 	void run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector<vector<string>>& profiles);
 
+	void run2(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector<vector<string>>& profiles);
+
 	void init_clusters(size_t size);
 
 	static void update_profile2(vector<vector<string>>& profiles, int id_profile, string s1, string s2, const unsigned char* alignment, int length_alignment);

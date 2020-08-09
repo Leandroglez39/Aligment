@@ -95,7 +95,10 @@ int main()
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
 	start = clock();
-	gt.run(sequences, matrix, profiles);
+	//gt.run(sequences_sort, matrix, profiles);
+
+	gt.run2(sequences_sort, matrix, profiles);
+
 
 	std::cout << "Alineamiento en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;

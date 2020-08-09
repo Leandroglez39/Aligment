@@ -95,6 +95,34 @@ void NJ::run(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector
 
 }
 
+void NJ::run2(vector<string>& sequences, vector<vector<int>>& dist_matrix, vector<vector<string>>& profiles)
+{
+	string s1;
+	string s2;
+
+
+	while (this->Tree.size() != 1)
+	{
+		if (this->Tree.size() >= 2)
+		{
+			auto& c1 = this->Tree.front();
+			this->Tree.pop();
+			auto& c2 = this->Tree.front();
+			this->Tree.pop();
+
+
+			merge(c1, c2, dist_matrix[c1.index_i][c2.index_i]);
+
+			//cout << "Muero en update dist matrix multi\n";
+			//update_dist_matrix(dist_matrix, c1.index_i, dist_matrix[c1.index_i][c2.index_i]);
+
+			//cout << "Muero en update profile multi\n";
+			update_profile_multiple(profiles, c1.index_i, c2.index_i);
+
+		}
+	}
+}
+
 void NJ::init_clusters(size_t size)
 {
 	auto c1 = Cluster();
@@ -246,15 +274,15 @@ int NJ::score(vector<string> prof1, vector<string> prof2, int row, int col)
 
 	if (prof1.size() > 2 && prof2.size() > 2)
 	{
-		score += prof1[0][row] == prof2[0][col] ? 1 : -2;
+		score += prof1[0][row] == prof2[0][col] ? 3 : -1;
 		score += prof1[0][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
 		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
-		score += prof1[prof1.size() - 1][row] == prof2[0][col] ? 1 : -2;
+		score += prof1[prof1.size() - 1][row] == prof2[0][col] ? 3 : -1;
 		score += prof1[prof1.size() - 1][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
 		score += prof1[prof1.size() - 1][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 1 : -2;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 3 : -1;
 		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
 		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
@@ -262,11 +290,11 @@ int NJ::score(vector<string> prof1, vector<string> prof2, int row, int col)
 	}
 	else
 	{
-		score += prof1[0][row] == prof2[0][col] ? 1 : -1;
-		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+		score += prof1[0][row] == prof2[0][col] ? 3 : -1;
+		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 1 : -1;
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 3 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
 
 	}
 	return score;
@@ -282,19 +310,12 @@ vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profi
 
 	vector<string> result(profile2.size() + profil1.size());
 
-	vector<vector<int>> matrix(size1 + 1);
+	vector<vector<int>> matrix(size1 + 1, vector<int>(size2 + 1));
 
-	vector<vector<int>> step_trace_back(size1 + 1);
+	vector<vector<int>> step_trace_back(size1 + 1, vector<int>(size2 + 1));
 
 	vector<int>trace_back;
 
-
-	// ReSharper disable once CppUseAuto
-	for (size_t i = 0; i < size1 + 1; i++)
-	{
-		matrix[i].resize(size2 + 1);
-		step_trace_back[i].resize(size2 + 1);
-	}
 
 	matrix[0][0] = 0;
 	step_trace_back[0][0] = 0;
