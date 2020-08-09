@@ -58,6 +58,8 @@ int main()
 
 	vector<string> sequences;
 	vector<vector<string>> profiles;
+	vector<string> sequences_sort;
+	int init;
 	/*profiles[0].push_back("casa");
 	profiles[1].push_back("atr");
 	profiles[2].push_back("perro");
@@ -71,9 +73,9 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data3.txt");
+	gt.init_data(sequences, profiles, "data1.txt");
 
-	//size_t c = NJ::load_data(sequences, "data3.txt");
+	vector<int> check_seq(sequences.size());
 
 	gt.init_clusters(sequences.size());
 
@@ -81,9 +83,15 @@ int main()
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
 	start = clock();
-	auto matrix = Tools::calculate_dist_matrix(sequences);
+	auto matrix = Tools::calculate_dist_matrix(sequences, init);
 
 	std::cout << "Distance Matrix OK en: ";
+	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+	start = clock();
+	Tools::seq_sort(sequences, check_seq, init, sequences_sort, matrix);
+
+	std::cout << "Sequencias ordenadas en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
 	start = clock();
