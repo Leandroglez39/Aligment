@@ -56,5 +56,7 @@ public:
 
 	static int trazas_size;
 
-	static vector<vector<int>> calculate_dist_matrix(vector<string>& sequences);
+	static vector<vector<int>> calculate_dist_matrix(vector<string>& sequences, int& init);
+
+	static void seq_sort(vector<string>& sequences, vector<int>& check_seq, int& init, vector<string>& sequences_sorted, vector<vector<int>>& matrix);
 };
