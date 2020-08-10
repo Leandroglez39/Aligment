@@ -73,7 +73,7 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data1.txt");
+	gt.init_data(sequences, profiles, "data3.txt");
 
 	vector<int> check_seq(sequences.size());
 

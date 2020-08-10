@@ -274,27 +274,26 @@ int NJ::score(vector<string> prof1, vector<string> prof2, int row, int col)
 
 	if (prof1.size() > 2 && prof2.size() > 2)
 	{
-		score += prof1[0][row] == prof2[0][col] ? 3 : -1;
-		score += prof1[0][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
-		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
+		score += prof1[0][col] == prof2[0][row] ? 1 : -1;
+		score += prof1[0][col] == prof2[static_cast<int>(prof2.size() / 2)][row] ? 1 : -1;
+		score += prof1[0][col] == prof2[prof2.size() - 1][row] ? 1 : -1;
 
-		score += prof1[prof1.size() - 1][row] == prof2[0][col] ? 3 : -1;
-		score += prof1[prof1.size() - 1][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
-		score += prof1[prof1.size() - 1][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
+		score += prof1[prof1.size() - 1][col] == prof2[0][row] ? 3 : -1;
+		score += prof1[prof1.size() - 1][col] == prof2[static_cast<int>(prof2.size() / 2)][row] ? 1 : -1;
+		score += prof1[prof1.size() - 1][col] == prof2[prof2.size() - 1][row] ? 1 : -1;
 
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 3 : -1;
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[static_cast<int>(prof2.size() / 2)][col] ? 1 : -2;
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
-
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][col] == prof2[0][row] ? 3 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][col] == prof2[static_cast<int>(prof2.size() / 2)][row] ? 1 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][col] == prof2[prof2.size() - 1][row] ? 1 : -1;
 
 	}
 	else
 	{
-		score += prof1[0][row] == prof2[0][col] ? 3 : -1;
-		score += prof1[0][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
+		score += prof1[0][col] == prof2[0][row] ? 1 : -1;
+		score += prof1[0][col] == prof2[prof2.size() - 1][row] ? 1 : -1;
 
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[0][col] ? 3 : -1;
-		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][row] == prof2[prof2.size() - 1][col] ? 1 : -2;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][col] == prof2[0][row] ? 1 : -1;
+		score += prof1[static_cast<int>((prof1.size() - 1) / 2)][col] == prof2[prof2.size() - 1][row] ? 1 : -1;
 
 	}
 	return score;
@@ -341,9 +340,9 @@ vector<string> NJ::align_alignments(vector<string> profil1, vector<string> profi
 		{
 
 
-			aux[0] = score(profil1, profile2, i - 1, j);
-			aux[1] = score(profil1, profile2, i, j - 1);
-			aux[2] = score(profil1, profile2, i - 1, j - 1);
+			aux[0] = score(profil1, profile2, i - 1, j) - 2;
+			aux[1] = score(profil1, profile2, i, j - 1) - 2;
+			aux[2] = score(profil1, profile2, i - 1, j - 1) + 5;
 
 
 			if (aux[2] >= aux[1])
