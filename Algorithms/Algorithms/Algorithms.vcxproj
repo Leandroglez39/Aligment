@@ -147,6 +147,7 @@
     <ClCompile Include="Algoritmos.cpp" />
     <ClCompile Include="edlib.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="mstar.cpp" />
     <ClCompile Include="Nj.cpp" />
     <ClCompile Include="normal-NW.cpp" />
     <ClCompile Include="Tools.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="def.h" />
     <ClInclude Include="edlib.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="mstar.h" />
     <ClInclude Include="Nj.h" />
     <ClInclude Include="normal-NW.h" />
     <ClInclude Include="Tools.h" />

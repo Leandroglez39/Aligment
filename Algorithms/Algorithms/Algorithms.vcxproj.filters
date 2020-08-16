@@ -39,6 +39,9 @@
     <ClCompile Include="_editdistance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mstar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="edlib.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mstar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
