@@ -11,6 +11,7 @@
 #include "_editdistance.h"
 #include <omp.h>
 #include "Input.h"
+#include "mstar.h"
 
 
 
@@ -59,7 +60,7 @@ int main()
 	vector<string> sequences;
 	vector<vector<string>> profiles;
 	vector<string> sequences_sort;
-	vector<vector<unsigned char*>> alignments;	
+
 	int init;
 	/*profiles[0].push_back("casa");
 	profiles[1].push_back("atr");
@@ -74,7 +75,7 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data2.txt");
+	gt.init_data(sequences, profiles, "data1.txt");
 
 	vector<int> check_seq(sequences.size());
 
@@ -137,33 +138,58 @@ int main()
 
 
 
-	start = clock();
+		/*start = clock();
 
-	EdlibAlignResult result;
-
-
-	string s1;
-	string s2;
-	int j = 0;
-
-#pragma omp parallel for private(s1,s2) collapse(2)
-	for (int i = 0; i < sequences.size(); i++)
-		for (j = i + 1; j < sequences.size(); j++)
-		{
-			s2 = sequences[i];
-			s1 = sequences[j];
-
-			result = edlibAlign(s1.c_str(), s1.size(), s2.c_str(), s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
-
-			edlibFreeAlignResult(result);
-		}
-
-	std::cout << "Alineamiento de 1 con N: ";
-	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+		EdlibAlignResult result;
 
 
+		string s1;
+		string s2;
+		int j = 0;
 
-	/*cout << result.editDistance;*/
+	#pragma omp parallel for private(s1,s2) collapse(2)
+		for (int i = 0; i < sequences.size(); i++)
+			for (j = i + 1; j < sequences.size(); j++)
+			{
+				s2 = sequences[i];
+				s1 = sequences[j];
+
+				result = edlibAlign(s1.c_str(), s1.size(), s2.c_str(), s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
+
+				edlibFreeAlignResult(result);
+			}
+
+		std::cout << "Alineamiento de 1 con N: ";
+		std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;*/
+
+		vector<vector<pair<unsigned char*, int>>> pair_alignments(sequences.size(), vector<pair<unsigned char*, int>>(sequences.size()));
+		vector<string> mul_align(sequences.size());
+		int piv = 0;
+		start = clock();
+		build_distance_matrix(sequences, pair_alignments, piv);
+		msa(pair_alignments, mul_align, piv);
+
+		std::cout << "Alineamiento en: ";
+		std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+
+	//string s1 = "hola";
+	//string s2 = "perro";
+
+	//auto dd = edlibAlign(s1.c_str(), s1.size(), s2.c_str(), s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+
+
+	////cout << static_cast<int>(dd.alignment[1]); 
+	//printAlignment(s1.c_str(), s2.c_str(), dd.alignment, dd.alignmentLength, *(dd.endLocations), EDLIB_MODE_HW);
+
+	//for (size_t i = 0; i < dd.alignmentLength; i++)
+	//{
+	//	cout << static_cast<int>(dd.alignment[i]);
+	//}
+
+	//cout << '\n';
+	//edlibFreeAlignResult(dd);
+
 
 	/*char* query = new char[s1.size() + 1];
 	char* target = new char[s2.size() + 1];
