@@ -7,9 +7,12 @@
 
 using namespace std;
 
-void build_distance_matrix(vector<string>& sequences, vector<vector<pair<unsigned char*, int>>>& alignments, int& piv);
+void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string, string>>>& alignments, int& piv);
 
-void msa(vector<vector<pair<unsigned char*, int>>>& pair_alignments, vector<string>& multi_align, int piv);
+void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& multi_align, int piv);
 
-string merge_star(vector<vector<pair<unsigned char*, int>>>& pair_alignments, int piv);
+string merge_star(vector<vector<pair<string, string>>>& pair_alignments, int piv);
 
+pair<string, string> convert_to_vector(int length, const unsigned char* alignment, vector<string>& sequences, int index_q, int index_t);
+
+void parse_alignment(vector<string>& multi_align, int piv, vector<string>& sequences, vector<string>& alig_result);

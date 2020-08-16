@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-void build_distance_matrix(vector<string>& sequences, vector<vector<pair<unsigned char*, int>>>& alignments, int& piv)
+void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string, string>>>& alignments, int& piv)
 {
 	const auto seq_len = sequences.size();
 	// ReSharper disable once CppJoinDeclarationAndAssignment
@@ -10,6 +10,8 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<unsigne
 	long min_distance = 999999999;
 	auto& piv_act = piv;
 	size_t j = 0;
+
+
 
 	vector<long> dist(sequences.size(), 0);
 
@@ -26,11 +28,19 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<unsigne
 			dist[i] += result.editDistance;
 			dist[j] += result.editDistance;
 
-			alignments[i][j] = make_pair(result.alignment, result.editDistance);
-			alignments[j][i] = make_pair(result.alignment, result.editDistance);
+
+			alignments[i][j] = convert_to_vector(result.alignmentLength, result.alignment, sequences, j, i);
+			alignments[j][i] = convert_to_vector(result.alignmentLength, result.alignment, sequences, j, i);
 
 
 			edlibFreeAlignResult(result);
+			//delete[]t;
+		}
+
+		if (sequences.size() * 27 > dist[i])
+		{
+			piv_act = i;
+			return;
 		}
 	}
 
@@ -41,49 +51,65 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<unsigne
 			piv_act = i;
 		}
 
-
+	cout << min_distance << '\n';
 }
 
 
-void msa(vector<vector<pair<unsigned char*, int>>>& pair_alignments, vector<string>& multi_align, int piv)
+void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& multi_align, int piv)
 {
 	auto star = merge_star(pair_alignments, piv);
 
-	multi_align[0] = star;
+
+	string aa;
+
+	for (char i : star)
+		aa.push_back(i);
+
+
+	multi_align[piv] = aa;
 	string substr;
 
 	int len = star.size();
 	int cnt = 0;
+	string a;
+
 	for (int i = 0; i < multi_align.size(); i++) {
 		if (i == piv)continue;
 		int pos = 0;
 		substr = "";
 		for (int j = 0; j < len; j++)
 		{
+			if (piv == cnt)cnt++;
 
-			auto a = static_cast<char>(pair_alignments[piv][cnt].first[pos]) - '0';
+			if (cnt == multi_align.size())
+				return;
 
-			if (piv != cnt && a == star[j]) {
-				substr += to_string(static_cast<int>(pair_alignments[piv][cnt].first[pos]));
+			a = pair_alignments[piv][cnt].first;
+
+			//cout << "Antes\n";
+			if (a[pos] == star[j] || (star[j] != '1' && a[pos] != '2')) {
+				//	cout << "IF\n";
+				substr += a[pos];
 				pos++;
 			}
 			else {
-				substr += '1';
+				substr += '2';
 			}
 		}
 		multi_align[i] = substr;
+
 		cnt++;
 	}
 
 }
 
-string merge_star(vector<vector<pair<unsigned char*, int>>>& pair_alignments, int piv)
+string merge_star(vector<vector<pair<string, string>>>& pair_alignments, int piv)
 {
 
 
 	string comstr;
 	string str1;
-	unsigned char* str2;
+	string str2;
 	for (size_t i = 0; i < pair_alignments[piv].size(); i++)
 	{
 		str1 = comstr;
@@ -93,34 +119,35 @@ string merge_star(vector<vector<pair<unsigned char*, int>>>& pair_alignments, in
 		comstr.clear();
 
 		int len1 = str1.size();
-		int len2 = pair_alignments[piv][i].second;
+		int len2 = str2.size();
 		int pivx = 0;
 		int pivy = 0;
 		while (len1 != pivx || len2 != pivy) {
 			if (len1 == pivx) {
-				comstr += to_string(static_cast<int>(str2[pivy]));
+				comstr.push_back(str2[pivy]);
 				pivy++;
 			}
 			else if (len2 == pivy) {
-				comstr += str1[pivx];
+				comstr.push_back(str1[pivx]);
 				pivx++;
 			}
 			else {
-				if (str1[pivx] == '1' && str2[pivy] == 1) {
-					comstr += str1[pivx];
+				if (str1[pivx] == '-' && str2[pivy] == '-')
+				{
+					comstr.push_back(str1[pivx]);
 					pivx++;
 					pivy++;
 				}
-				else if (str1[pivx] == '1') {
-					comstr += str1[pivx];
+				else if (str1[pivx] == '-') {
+					comstr.push_back(str1[pivx]);
 					pivx++;
 				}
-				else if (str2[pivy] == 1) {
-					comstr += to_string(static_cast<int>(str2[pivy]));
+				else if (str2[pivy] == '-') {
+					comstr.push_back(str2[pivy]);
 					pivy++;
 				}
 				else {
-					comstr += str1[pivx];
+					comstr.push_back(str1[pivx]);
 					pivx++;
 					pivy++;
 				}
@@ -128,5 +155,125 @@ string merge_star(vector<vector<pair<unsigned char*, int>>>& pair_alignments, in
 		}
 	}
 	return comstr;
+
+}
+
+pair<string, string> convert_to_vector(const int length, const unsigned char* alignment, vector<string>& sequences, int index_q, int index_t)
+{
+
+	pair<string, string> s;
+
+
+	string query;
+	string target;
+	int s1_index = 0;
+	int s2_index = 0;
+
+
+
+	for (auto i = 0; i < length; i++)
+	{
+		switch (alignment[i])
+		{
+		case 1:
+		{
+			query.push_back(sequences[index_q][s1_index]);
+			target.push_back('-');
+			s1_index++;
+			break;
+		}
+		case 2:
+		{
+			target.push_back(sequences[index_t][s2_index]);
+			query.push_back('-');
+			s2_index++;
+			break;
+		}
+		default:
+		{
+			query.push_back(sequences[index_q][s1_index]);
+			target.push_back(sequences[index_t][s2_index]);
+			s1_index++;
+			s2_index++;
+		}
+		}
+	}
+
+
+	s.first = query;
+	s.second = target;
+
+
+	return  s;
+}
+
+void parse_alignment(vector<string>& multi_align, int piv, vector<string>& sequences, vector<string>& alig_result)
+{
+
+	for (int i = 0; i < multi_align.size(); i++)
+	{
+
+		if (i == piv)
+		{
+			int j = 0;
+			int x = 0;
+
+			while (x < multi_align[i].size())
+			{
+				switch (multi_align[i][x])
+				{
+
+				case '1':
+				{
+					alig_result[i].push_back('-');
+					x++;
+					break;
+				}
+				default:
+				{
+
+					alig_result[i].push_back(sequences[i][j]);
+					j++;
+					x++;
+					break;;
+				}
+
+				}
+
+			}
+
+		}
+		else
+		{
+			int j = 0;
+			int x = 0;
+
+			while (x < multi_align[i].size())
+			{
+				switch (multi_align[i][x])
+				{
+
+				case '2':
+				{
+					alig_result[i].push_back('-');
+					x++;
+					break;
+				}
+				default:
+				{
+
+					alig_result[i].push_back(sequences[i][j]);
+					j++;
+					x++;
+					break;;
+				}
+
+				}
+			}
+
+		}
+
+
+	}
 
 }
