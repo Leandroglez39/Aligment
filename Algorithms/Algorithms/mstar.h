@@ -11,7 +11,7 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 
 void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& multi_align, int piv);
 
-string merge_star(vector<vector<pair<string, string>>>& pair_alignments, int piv);
+string merge_star(string s1, string s2);
 
 pair<string, string> convert_to_vector(int length, const unsigned char* alignment, vector<string>& sequences, int index_q, int index_t);
 

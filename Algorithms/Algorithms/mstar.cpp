@@ -1,5 +1,5 @@
 #include "mstar.h"
-
+#include <omp.h>
 #include <iostream>
 
 void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string, string>>>& alignments, int& piv)
@@ -9,39 +9,43 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 	EdlibAlignResult result;
 	long min_distance = 999999999;
 	auto& piv_act = piv;
-	size_t j = 0;
-
+	int j = 0;
+	int i = 0;
 
 
 	vector<long> dist(sequences.size(), 0);
 
-	//#pragma omp parallel for shared(min_distance, piv_act)  collapse(2) reduction (+: sum_accumulate)
-	for (size_t i = 0; i < seq_len; i++)
+	omp_set_num_threads(4);
+
+	for (i = 0; i < seq_len; i++)
 	{
+#pragma omp parallel for shared(alignments, piv_act, i) private(result) 
 		for (j = i + 1; j < seq_len; j++)
 		{
 			// ReSharper disable once CppJoinDeclarationAndAssignment
 			result = edlibAlign(sequences[j].c_str(), sequences[j].size(), sequences[i].c_str(), sequences[i].size(),
 				edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
 
-
-			dist[i] += result.editDistance;
-			dist[j] += result.editDistance;
-
+#pragma omp critical
+			{
+				dist[i] += result.editDistance;
+				dist[j] += result.editDistance;
+			}
 
 			alignments[i][j] = convert_to_vector(result.alignmentLength, result.alignment, sequences, j, i);
-			alignments[j][i] = convert_to_vector(result.alignmentLength, result.alignment, sequences, j, i);
+			alignments[j][i] = make_pair(alignments[i][j].second, alignments[i][j].first);
 
 
 			edlibFreeAlignResult(result);
-			//delete[]t;
 		}
 
-		if (sequences.size() * 27 > dist[i])
+		if (sequences.size() * 50 > dist[i])
 		{
 			piv_act = i;
 			return;
 		}
+		alignments[i].clear();
+		
 	}
 
 	for (size_t i = 0; i < seq_len; i++)
@@ -57,16 +61,17 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 
 void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& multi_align, int piv)
 {
-	auto star = merge_star(pair_alignments, piv);
+	string star;
 
 
-	string aa;
+	for (size_t i = 0; i < pair_alignments[piv].size(); i++)
+		if (i != piv)
+			star = merge_star(star, pair_alignments[piv][i].second);
 
-	for (char i : star)
-		aa.push_back(i);
 
 
-	multi_align[piv] = aa;
+	multi_align[piv] = star;
+
 	string substr;
 
 	int len = star.size();
@@ -79,81 +84,72 @@ void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& 
 		substr = "";
 		for (int j = 0; j < len; j++)
 		{
-			if (piv == cnt)cnt++;
+			if (piv == cnt) cnt++;
 
-			if (cnt == multi_align.size())
-				return;
+			if (cnt == pair_alignments[piv].size())	return;
 
-			a = pair_alignments[piv][cnt].first;
 
-			//cout << "Antes\n";
-			if (a[pos] == star[j] || (star[j] != '1' && a[pos] != '2')) {
-				//	cout << "IF\n";
-				substr += a[pos];
+			a = pair_alignments[piv][cnt].second;
+
+			if (a[pos] == star[j])
+			{
+				substr += pair_alignments[piv][cnt].first[pos];
 				pos++;
 			}
-			else {
-				substr += '2';
+			else
+			{
+				substr += '-';
 			}
 		}
 		multi_align[i] = substr;
-
 		cnt++;
 	}
 
 }
 
-string merge_star(vector<vector<pair<string, string>>>& pair_alignments, int piv)
+string merge_star(string str1, string str2)
 {
 
 
 	string comstr;
-	string str1;
-	string str2;
-	for (size_t i = 0; i < pair_alignments[piv].size(); i++)
-	{
-		str1 = comstr;
 
-		str2 = pair_alignments[piv][i].first;
 
-		comstr.clear();
-
-		int len1 = str1.size();
-		int len2 = str2.size();
-		int pivx = 0;
-		int pivy = 0;
-		while (len1 != pivx || len2 != pivy) {
-			if (len1 == pivx) {
-				comstr.push_back(str2[pivy]);
+	int len1 = str1.size();
+	int len2 = str2.size();
+	int pivx = 0;
+	int pivy = 0;
+	while (len1 != pivx || len2 != pivy) {
+		if (len1 == pivx) {
+			comstr += str2[pivy];
+			pivy++;
+		}
+		else if (len2 == pivy) {
+			comstr += str1[pivx];
+			pivx++;
+		}
+		else {
+			if (str1[pivx] == '-' && str2[pivy] == '-')
+			{
+				comstr += str1[pivx];
+				pivx++;
 				pivy++;
 			}
-			else if (len2 == pivy) {
-				comstr.push_back(str1[pivx]);
+			else if (str1[pivx] == '-') {
+				comstr += str1[pivx];
 				pivx++;
 			}
+			else if (str2[pivy] == '-') {
+				comstr += str2[pivy];
+				pivy++;
+			}
 			else {
-				if (str1[pivx] == '-' && str2[pivy] == '-')
-				{
-					comstr.push_back(str1[pivx]);
-					pivx++;
-					pivy++;
-				}
-				else if (str1[pivx] == '-') {
-					comstr.push_back(str1[pivx]);
-					pivx++;
-				}
-				else if (str2[pivy] == '-') {
-					comstr.push_back(str2[pivy]);
-					pivy++;
-				}
-				else {
-					comstr.push_back(str1[pivx]);
-					pivx++;
-					pivy++;
-				}
+				comstr += str1[pivx];
+				pivx++;
+				pivy++;
 			}
 		}
 	}
+
 	return comstr;
 
 }

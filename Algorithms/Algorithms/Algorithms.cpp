@@ -75,7 +75,7 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data3.txt");
+	gt.init_data(sequences, profiles, "data2.txt");
 
 	vector<int> check_seq(sequences.size());
 
@@ -84,6 +84,7 @@ int main()
 	std::cout << "Init Data OK en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
+	
 	//start = clock();
 	//auto matrix = Tools::calculate_dist_matrix(sequences, init);
 
@@ -170,11 +171,11 @@ int main()
 	int piv = 0;
 	start = clock();
 
-	
+
 	build_distance_matrix(sequences, pair_alignments, piv);
 	
 	msa(pair_alignments, mul_align, piv);
-	
+
 	//parse_alignment(mul_align, piv, sequences, parser_alig);
 
 
