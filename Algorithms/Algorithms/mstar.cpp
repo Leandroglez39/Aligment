@@ -39,13 +39,13 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 			edlibFreeAlignResult(result);
 		}
 
-		if (sequences.size() * 50 > dist[i])
+		/*if (sequences.size() * 28 > dist[i])
 		{
 			piv_act = i;
 			return;
-		}
-		alignments[i].clear();
-		
+		}*/
+		//alignments[i].clear();
+
 	}
 
 	for (size_t i = 0; i < seq_len; i++)
@@ -55,7 +55,7 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 			piv_act = i;
 		}
 
-	cout << min_distance << '\n';
+
 }
 
 
@@ -68,7 +68,7 @@ void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& 
 		if (i != piv)
 			star = merge_star(star, pair_alignments[piv][i].second);
 
-
+	cout << star << endl;
 
 	multi_align[piv] = star;
 
@@ -77,6 +77,7 @@ void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& 
 	int len = star.size();
 	int cnt = 0;
 	string a;
+	char b;
 
 	for (int i = 0; i < multi_align.size(); i++) {
 		if (i == piv)continue;
@@ -90,10 +91,11 @@ void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& 
 
 
 			a = pair_alignments[piv][cnt].second;
-
+			b = pair_alignments[piv][cnt].first[pos];
+			
 			if (a[pos] == star[j])
 			{
-				substr += pair_alignments[piv][cnt].first[pos];
+				substr += b;
 				pos++;
 			}
 			else
@@ -171,6 +173,16 @@ pair<string, string> convert_to_vector(const int length, const unsigned char* al
 	{
 		switch (alignment[i])
 		{
+		case 3:
+		{
+			target.push_back(sequences[index_t][s2_index]);
+			query.push_back('-');
+			query.push_back(sequences[index_q][s1_index]);
+			target.push_back('-');
+			s2_index++;
+			s1_index++;
+			break;
+		}
 		case 1:
 		{
 			query.push_back(sequences[index_q][s1_index]);

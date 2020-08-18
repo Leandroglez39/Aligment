@@ -75,7 +75,7 @@ int main()
 
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "data2.txt");
+	gt.init_data(sequences, profiles, "data8.txt");
 
 	vector<int> check_seq(sequences.size());
 
@@ -182,7 +182,7 @@ int main()
 	std::cout << "Alineamiento en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
-
+	//cout << piv << endl;
 
 	//string s1 = "hola";
 	//string s2 = "perro";
@@ -366,7 +366,7 @@ int main()
 
 	//Salvar el mult_align resultante
 	//input::save_alignment("alignment.txt", parser_alig);
-	input::save_alignment("alignment.txt", mul_align);
+	input::save_alignment("alignment8-1.txt", mul_align);
 
 	std::cout << " OK";
 }
