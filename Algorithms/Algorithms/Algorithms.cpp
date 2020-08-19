@@ -370,15 +370,21 @@ int main()
 
 	vector<string> x;
 	map<char, pair<int, vector<int>>> dic;
-	
-	NJ::load_data(x, "alignment8-1.txt");
 
-	refine(sequences, dic);
+	NJ::load_data(x, "alignment.b.txt");
 
-	erase_gaps(sequences);
 
-	
-	input::save_alignment("alignment8-1-refine.txt", x);
+	start = clock();
+
+
+	refine(x, dic);
+
+	erase_gaps(x);
+
+	std::cout << "Refine en: ";
+	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+	input::save_alignment("alignment.b-refine.txt", x);
 
 
 	std::cout << " OK";

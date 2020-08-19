@@ -72,7 +72,7 @@ void update_alignment(vector<string>& alignment, map<char, pair<int, vector<int>
 	for (auto x : dic)
 	{
 
-		if (x.second.second.size() > maximumn)
+		if (x.second.first > maximumn)
 		{
 			maximumn = x.second.second.size();
 			positions = x.second.second;
