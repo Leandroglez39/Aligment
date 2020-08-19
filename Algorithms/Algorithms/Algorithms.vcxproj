@@ -150,6 +150,7 @@
     <ClCompile Include="mstar.cpp" />
     <ClCompile Include="Nj.cpp" />
     <ClCompile Include="normal-NW.cpp" />
+    <ClCompile Include="Refine.cpp" />
     <ClCompile Include="Tools.cpp" />
     <ClCompile Include="_editdistance.cpp" />
   </ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="mstar.h" />
     <ClInclude Include="Nj.h" />
     <ClInclude Include="normal-NW.h" />
+    <ClInclude Include="Refine.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="_editdistance.h" />
   </ItemGroup>

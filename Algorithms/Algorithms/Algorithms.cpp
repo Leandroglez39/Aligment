@@ -12,7 +12,7 @@
 #include <omp.h>
 #include "Input.h"
 #include "mstar.h"
-
+#include "Refine.h"
 
 
 using namespace std;
@@ -84,7 +84,7 @@ int main()
 	std::cout << "Init Data OK en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
-	
+
 	//start = clock();
 	//auto matrix = Tools::calculate_dist_matrix(sequences, init);
 
@@ -163,210 +163,223 @@ int main()
 		std::cout << "Alineamiento de 1 con N: ";
 		std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;*/
 
-	vector<vector<pair<string, string>>> pair_alignments(sequences.size(), vector<pair<string, string>>(sequences.size()));
-	vector<string> mul_align(sequences.size());
-	vector<string> parser_alig(sequences.size());
+		//vector<vector<pair<string, string>>> pair_alignments(sequences.size(), vector<pair<string, string>>(sequences.size()));
+		//vector<string> mul_align(sequences.size());
+		//vector<string> parser_alig(sequences.size());
 
 
-	int piv = 0;
-	start = clock();
+		//int piv = 0;
+		//start = clock();
 
 
-	build_distance_matrix(sequences, pair_alignments, piv);
+		//build_distance_matrix(sequences, pair_alignments, piv);
+		//
+		//msa(pair_alignments, mul_align, piv);
+
+		////parse_alignment(mul_align, piv, sequences, parser_alig);
+
+
+		//std::cout << "Alineamiento en: ";
+		//std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
+		//cout << piv << endl;
+
+		//string s1 = "hola";
+		//string s2 = "perro";
+
+		//auto dd = edlibAlign(s1.c_str(), s1.size(), s2.c_str(), s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
+
+		//auto v = convert_to_vector(dd.alignmentLength, dd.alignment);
+
+		//edlibFreeAlignResult(dd);
+
+
+
+
+
+
+
+		////cout << static_cast<int>(dd.alignment[1]); 
+		//printAlignment(s1.c_str(), s2.c_str(), dd.alignment, dd.alignmentLength, *(dd.endLocations), EDLIB_MODE_HW);
+
+		//for (size_t i = 0; i < dd.alignmentLength; i++)
+		//{
+		//	cout << static_cast<int>(dd.alignment[i]);
+		//}
+
+		//cout << '\n';
+		//edlibFreeAlignResult(dd);
+
+
+		/*char* query = new char[s1.size() + 1];
+		char* target = new char[s2.size() + 1];
+
+		copy(s1.begin(), s1.end(), query);
+		query[s1.size()] = '\0';
+		copy(s2.begin(), s2.end(), target);
+		target[s2.size()] = '\0';
+
+		EdlibAlignResult result;
+		long cc = 0;*/
+
+		/*string s1 = "holaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholahola";
+		string s2 = "holaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholahola";*/
+
+
+		/*string s1 = sequences[0];
+		string s2 = sequences[1];
+
+		int64_t* query = new int64_t[s1.size() + 1];
+		int64_t* target = new int64_t[s2.size() + 1];
+
+		copy(s1.begin(), s1.end(), query);
+		query[s1.size()] = '\0';
+		copy(s2.begin(), s2.end(), target);
+		target[s2.size()] = '\0';*/
+
+
+		//auto cc = edit_distance(query, s1.size(), target, s2.size());;
+	//	int64_t* query = new int64_t[1400];
+	//	int64_t* target = new int64_t[1400];
+	//	//auto* query = new char[52];
+	//	//auto* target = new char[52];
+	//	long cc = 0;
+	//	string s1;
+	//	string s2;
+	//	size_t j_size;
+	//
+	////#pragma omp parallel for collapse(2) private(s1,s2)
+	//	for (int i = 0; i < sequences.size(); i++)
+	//		for (j_size = i + 1; j_size < sequences.size(); j_size++)
+	//		{
+	//
+	//
+	//
+	//
+	//
+	//
+	//			s1 = sequences[i];
+	//			s2 = sequences[j_size];
+	//
+	//#pragma omp critical
+	//			{
+	//				move(s1.begin(), s1.end(), query);
+	//				query[s1.size()] = '\0';
+	//				move(s2.begin(), s2.end(), target);
+	//				target[s2.size()] = '\0';
+	//			}
+	//			//cc += foo(query, target, s1.size(), s2.size());
+	//
+	//			//int64_t* query = new int64_t[s1.size() + 1];
+	//			//int64_t* target = new int64_t[s2.size() + 1];
+	//
+	//
+	//
+	//			const auto t = edit_distance(query, s1.size(), target, s2.size());
+	//			//const auto t = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
+	//			matrix[i][j_size] = t;
+	//			matrix[j_size][i] = t;
+	//
+	//
+	//			//cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+	//
+	//		}
+	//	delete[] query;
+	//	delete[] target;
+
+
+		//Imprimir matrix
+		/*for (size_t i = 0; i < sequencess.size(); i++)
+		{
+			for (size_t j = 0; j < sequencess.size(); j++)
+			{
+				cout << matrix[i][j] << " ";
+
+			}
+			cout << "\n";
+		}*/
+
+		//Comparar Edlib con edit sequence
+		/*auto* queryc = new char[10001];
+		auto* targetc = new char[10001];
+
+		move(s1.begin(), s1.end(), queryc);
+		queryc[s1.size()] = '\0';
+		move(s2.begin(), s2.end(), targetc);
+		targetc[s2.size()] = '\0';
+
+		std::cout << std::fixed << std::setprecision(10);
+		auto begin = std::chrono::system_clock::now();
+
+		auto dd = edlibAlign(queryc, s1.size(), targetc, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
+
+		auto last = std::chrono::system_clock::now() - begin;
+		auto copyTime = std::chrono::duration<double>(last).count();
+		std::cout << "    Edlib = " << dd << " en: " << copyTime << " sec" << std::endl;
+		delete[] queryc;
+		delete[] targetc;
+
+		s1 = sequences[0];
+		s2 = sequences[1];
+
+		move(s1.begin(), s1.end(), query);
+		query[s1.size()] = '\0';
+		move(s2.begin(), s2.end(), target);
+		target[s2.size()] = '\0';
+
+		begin = std::chrono::system_clock::now();
+
+		dd = edit_distance(query, s1.size(), target, s2.size());
+
+		last = std::chrono::system_clock::now() - begin;
+		copyTime = std::chrono::duration<double>(last).count();
+		std::cout << "    edit_dist = " << dd << " en: " << copyTime << " sec" << std::endl;*/
+
+		//auto m = Tools::calculate_dist_matrix(sequences);
+
+		/*
+		start = clock();
+
+		gt.run(sequences, m, profiles);
+
+		cout << "Ordenamiento OK en: ";
+		cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;*/
+
+
+		//auto a = myersCalcEditDistanceNW
+
+	//Salvar el profile resultante
+		/*int m = 0;
+		int index = 0;
+		for (int x = 0; x < profiles.size(); x++)
+		{
+			if (profiles[x].size() > m)
+			{
+				m = profiles[x].size();
+				index = x;
+			}
+		}
+		auto p = profiles[index];
+
+		input::save_alignment("alignment.txt", p);*/
+
+
+		//Salvar el mult_align resultante
+		//input::save_alignment("alignment.txt", parser_alig);
+		//input::save_alignment("alignment8-1.txt", mul_align);
+
+	vector<string> x;
+	map<char, pair<int, vector<int>>> dic;
 	
-	msa(pair_alignments, mul_align, piv);
+	NJ::load_data(x, "alignment8-1.txt");
 
-	//parse_alignment(mul_align, piv, sequences, parser_alig);
+	refine(sequences, dic);
 
+	erase_gaps(sequences);
 
-	std::cout << "Alineamiento en: ";
-	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+	
+	input::save_alignment("alignment8-1-refine.txt", x);
 
-	//cout << piv << endl;
-
-	//string s1 = "hola";
-	//string s2 = "perro";
-
-	//auto dd = edlibAlign(s1.c_str(), s1.size(), s2.c_str(), s2.size(), edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0));
-
-	//auto v = convert_to_vector(dd.alignmentLength, dd.alignment);
-
-	//edlibFreeAlignResult(dd);
-
-
-
-
-
-
-
-	////cout << static_cast<int>(dd.alignment[1]); 
-	//printAlignment(s1.c_str(), s2.c_str(), dd.alignment, dd.alignmentLength, *(dd.endLocations), EDLIB_MODE_HW);
-
-	//for (size_t i = 0; i < dd.alignmentLength; i++)
-	//{
-	//	cout << static_cast<int>(dd.alignment[i]);
-	//}
-
-	//cout << '\n';
-	//edlibFreeAlignResult(dd);
-
-
-	/*char* query = new char[s1.size() + 1];
-	char* target = new char[s2.size() + 1];
-
-	copy(s1.begin(), s1.end(), query);
-	query[s1.size()] = '\0';
-	copy(s2.begin(), s2.end(), target);
-	target[s2.size()] = '\0';
-
-	EdlibAlignResult result;
-	long cc = 0;*/
-
-	/*string s1 = "holaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholahola";
-	string s2 = "holaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholaholahola";*/
-
-
-	/*string s1 = sequences[0];
-	string s2 = sequences[1];
-
-	int64_t* query = new int64_t[s1.size() + 1];
-	int64_t* target = new int64_t[s2.size() + 1];
-
-	copy(s1.begin(), s1.end(), query);
-	query[s1.size()] = '\0';
-	copy(s2.begin(), s2.end(), target);
-	target[s2.size()] = '\0';*/
-
-
-	//auto cc = edit_distance(query, s1.size(), target, s2.size());;
-//	int64_t* query = new int64_t[1400];
-//	int64_t* target = new int64_t[1400];
-//	//auto* query = new char[52];
-//	//auto* target = new char[52];
-//	long cc = 0;
-//	string s1;
-//	string s2;
-//	size_t j_size;
-//
-////#pragma omp parallel for collapse(2) private(s1,s2)
-//	for (int i = 0; i < sequences.size(); i++)
-//		for (j_size = i + 1; j_size < sequences.size(); j_size++)
-//		{
-//
-//
-//
-//
-//
-//
-//			s1 = sequences[i];
-//			s2 = sequences[j_size];
-//
-//#pragma omp critical
-//			{
-//				move(s1.begin(), s1.end(), query);
-//				query[s1.size()] = '\0';
-//				move(s2.begin(), s2.end(), target);
-//				target[s2.size()] = '\0';
-//			}
-//			//cc += foo(query, target, s1.size(), s2.size());
-//
-//			//int64_t* query = new int64_t[s1.size() + 1];
-//			//int64_t* target = new int64_t[s2.size() + 1];
-//
-//
-//
-//			const auto t = edit_distance(query, s1.size(), target, s2.size());
-//			//const auto t = edlibAlign(query, s1.size(), target, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
-//			matrix[i][j_size] = t;
-//			matrix[j_size][i] = t;
-//
-//
-//			//cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
-//
-//		}
-//	delete[] query;
-//	delete[] target;
-
-
-	//Imprimir matrix
-	/*for (size_t i = 0; i < sequencess.size(); i++)
-	{
-		for (size_t j = 0; j < sequencess.size(); j++)
-		{
-			cout << matrix[i][j] << " ";
-
-		}
-		cout << "\n";
-	}*/
-
-	//Comparar Edlib con edit sequence
-	/*auto* queryc = new char[10001];
-	auto* targetc = new char[10001];
-
-	move(s1.begin(), s1.end(), queryc);
-	queryc[s1.size()] = '\0';
-	move(s2.begin(), s2.end(), targetc);
-	targetc[s2.size()] = '\0';
-
-	std::cout << std::fixed << std::setprecision(10);
-	auto begin = std::chrono::system_clock::now();
-
-	auto dd = edlibAlign(queryc, s1.size(), targetc, s2.size(), edlibNewAlignConfig(s1.size(), EDLIB_MODE_NW, EDLIB_TASK_PATH, nullptr, 0)).editDistance;
-
-	auto last = std::chrono::system_clock::now() - begin;
-	auto copyTime = std::chrono::duration<double>(last).count();
-	std::cout << "    Edlib = " << dd << " en: " << copyTime << " sec" << std::endl;
-	delete[] queryc;
-	delete[] targetc;
-
-	s1 = sequences[0];
-	s2 = sequences[1];
-
-	move(s1.begin(), s1.end(), query);
-	query[s1.size()] = '\0';
-	move(s2.begin(), s2.end(), target);
-	target[s2.size()] = '\0';
-
-	begin = std::chrono::system_clock::now();
-
-	dd = edit_distance(query, s1.size(), target, s2.size());
-
-	last = std::chrono::system_clock::now() - begin;
-	copyTime = std::chrono::duration<double>(last).count();
-	std::cout << "    edit_dist = " << dd << " en: " << copyTime << " sec" << std::endl;*/
-
-	//auto m = Tools::calculate_dist_matrix(sequences);
-
-	/*
-	start = clock();
-
-	gt.run(sequences, m, profiles);
-
-	cout << "Ordenamiento OK en: ";
-	cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;*/
-
-
-	//auto a = myersCalcEditDistanceNW
-
-//Salvar el profile resultante
-	/*int m = 0;
-	int index = 0;
-	for (int x = 0; x < profiles.size(); x++)
-	{
-		if (profiles[x].size() > m)
-		{
-			m = profiles[x].size();
-			index = x;
-		}
-	}
-	auto p = profiles[index];
-
-	input::save_alignment("alignment.txt", p);*/
-
-
-	//Salvar el mult_align resultante
-	//input::save_alignment("alignment.txt", parser_alig);
-	input::save_alignment("alignment8-1.txt", mul_align);
 
 	std::cout << " OK";
 }
