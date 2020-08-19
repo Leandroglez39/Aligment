@@ -6,9 +6,9 @@ void refine(vector<string>& alignment, map<char, pair<int, vector<int>>>& dic)
 {
 
 
-	int col = 0;
+	long long col = 0;
 	bool goon = true;
-	int alignment_size = alignment[0].size();
+	long long alignment_size = alignment[0].size();
 
 
 	while (goon)
@@ -108,8 +108,8 @@ void erase_gaps(vector<string>& alignments)
 {
 	auto col = alignments[0].size() - static_cast<unsigned long long>(1);
 	auto goon = true;
-	int len = alignments.size();
-	auto align_size = alignments[0].size() - 1;
+	long long len = alignments.size();
+
 
 	while (goon)
 	{
@@ -131,9 +131,9 @@ void erase_gaps(vector<string>& alignments)
 		if (len == 0)
 		{
 			for (auto& alignment : alignments)
-				alignment.resize(align_size);
+				alignment.pop_back();
 			len = alignments.size();
-			align_size--;
+
 
 
 		}
