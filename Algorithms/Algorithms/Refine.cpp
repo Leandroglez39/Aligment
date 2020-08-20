@@ -116,6 +116,10 @@ void erase_gaps(vector<string>& alignments)
 
 		for (auto& alignment : alignments)
 		{
+			if (alignment[col] == 'G')
+			{
+				int s = 1;
+			}
 			if (alignment[col] == '-')
 			{
 				len--;
@@ -131,13 +135,13 @@ void erase_gaps(vector<string>& alignments)
 		if (len == 0)
 		{
 			for (auto& alignment : alignments)
-				alignment.pop_back();
+				alignment.erase(col,1);
 			len = alignments.size();
 
 
 
 		}
-		else return;
+
 
 		if (col > 0)
 		{
@@ -147,4 +151,63 @@ void erase_gaps(vector<string>& alignments)
 
 	}
 
+}
+
+void block_shift_refinement(vector<string>& alignments)
+{
+	const auto col = alignments[0].size() - 1;
+	vector<char> col_assign(col + 1, '*');
+
+	for (auto& alignment : alignments)
+	{
+		for (auto j = 0; j <= col; j++)
+			if (col_assign[j] == '*' || col_assign[j] == '-')
+			{
+				col_assign[j] = alignment[j];
+			}
+	}
+
+	for (auto i = 0; i < alignments.size(); i++)
+	{
+		for (auto j = 0; j <= col; j++)
+		{
+			if (alignments[i][j] == '-')
+			{
+
+				for (auto k = j + 1; k <= col; k++)
+				{
+					if (alignments[i][k] != '-')
+					{
+						int pos;
+
+						if (col_to_swap(col_assign, j, k - 1, alignments[i][k], pos))
+						{
+							swap(alignments[i][k], alignments[i][pos]);
+							j = pos + 1;
+						}
+						else
+						{
+							j = k;
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+}
+
+
+bool col_to_swap(vector<char>& col_asign, int init, int end, char val, int& pos)
+{
+
+	for (auto i = init; i <= end; i++)
+		if (col_asign[i] == val)
+		{
+			pos = i;
+			return true;
+		}
+
+	return false;
 }

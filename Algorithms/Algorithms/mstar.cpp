@@ -39,11 +39,11 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 			edlibFreeAlignResult(result);
 		}
 
-		/*if (sequences.size() * 28 > dist[i])
+		if (sequences.size() * 19 > dist[i])
 		{
 			piv_act = i;
 			return;
-		}*/
+		}
 		//alignments[i].clear();
 
 	}
@@ -68,7 +68,7 @@ void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& 
 		if (i != piv)
 			star = merge_star(star, pair_alignments[piv][i].second);
 
-	cout << star << endl;
+	
 
 	multi_align[piv] = star;
 
