@@ -39,7 +39,7 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 			edlibFreeAlignResult(result);
 		}
 
-		if (sequences.size() * 19 > dist[i])
+		if (sequences.size() * 220 > dist[i])
 		{
 			piv_act = i;
 			return;

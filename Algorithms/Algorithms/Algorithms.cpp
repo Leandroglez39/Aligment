@@ -150,9 +150,13 @@ int main()
 
 	//auto instance = Tools();
 
+	string name = "set12000";
+	string txt = ".txt";
+	string fasta = ".fasta";
+	
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, "cleanCOMPRA.txt");
+	gt.init_data(sequences, profiles, name+txt);
 
 	vector<int> check_seq(sequences.size());
 
@@ -171,6 +175,7 @@ int main()
 	int piv = 0;
 	start = clock();
 
+	auto ti = clock();
 
 	build_distance_matrix(sequences, pair_alignments, piv);
 
@@ -205,15 +210,18 @@ int main()
 	std::cout << "Block Shift en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
+	std::cout << "Tiempo total en: ";
+	std::cout << static_cast<double>(clock() - ti) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
+
 
 	start = clock();
 
-	input::save_alignment("alignment-cleanCOMPRA.fasta", mul_align);
+	input::save_alignment(name+fasta, mul_align);
 
 	std::cout << "Save en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
-	
+
 
 
 	//cout << piv << endl;
@@ -404,7 +412,7 @@ int main()
 
 
 
-	
+
 
 
 
