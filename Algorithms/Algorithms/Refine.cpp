@@ -116,10 +116,7 @@ void erase_gaps(vector<string>& alignments)
 
 		for (auto& alignment : alignments)
 		{
-			if (alignment[col] == 'G')
-			{
-				int s = 1;
-			}
+			
 			if (alignment[col] == '-')
 			{
 				len--;
@@ -188,6 +185,7 @@ void block_shift_refinement(vector<string>& alignments)
 						else
 						{
 							j = k;
+							break;
 						}
 					}
 				}

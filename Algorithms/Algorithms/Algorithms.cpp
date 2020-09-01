@@ -150,7 +150,7 @@ int main()
 
 	//auto instance = Tools();
 
-	string name = "set12000";
+	string name = "data8";
 	string txt = ".txt";
 	string fasta = ".fasta";
 	
@@ -167,7 +167,7 @@ int main()
 
 
 
-	vector<vector<pair<string, string>>> pair_alignments(sequences.size(), vector<pair<string, string>>(sequences.size()));
+	vector<pair<string, string>> pair_alignments(sequences.size());
 	vector<string> mul_align(sequences.size());
 	vector<string> parser_alig(sequences.size());
 
@@ -177,7 +177,9 @@ int main()
 
 	auto ti = clock();
 
-	build_distance_matrix(sequences, pair_alignments, piv);
+	build_distance_matrix(sequences, piv);
+
+	pair_alignment(sequences, pair_alignments, piv);
 
 	std::cout << " Pivote y PSA en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
@@ -198,7 +200,7 @@ int main()
 
 	erase_gaps(mul_align);
 
-	std::cout << "Refine en: ";
+	std::cout << "Refinamiento en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
 	start = clock();

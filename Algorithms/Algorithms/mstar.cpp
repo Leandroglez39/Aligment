@@ -2,7 +2,7 @@
 #include <omp.h>
 #include <iostream>
 
-void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string, string>>>& alignments, int& piv)
+void build_distance_matrix(vector<string>& sequences, int& piv, bool complete, float dif)
 {
 	const auto seq_len = sequences.size();
 	// ReSharper disable once CppJoinDeclarationAndAssignment
@@ -10,65 +10,110 @@ void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string,
 	long min_distance = 999999999;
 	auto& piv_act = piv;
 	int j = 0;
-	int i = 0;
+	int sum_acumulate = 0;
+	int max_length = 0;
 
+	for (size_t i = 0; i < seq_len; i++)
+	{
+		if (max_length < sequences[i].size())
+		{
+			max_length = sequences[i].size();
+		}
+	}
 
 	vector<long> dist(sequences.size(), 0);
 
 	omp_set_num_threads(4);
 
-	for (i = 0; i < seq_len; i++)
+
+#pragma omp parallel for shared(piv_act) private(result) 
+	for (j = 1; j < seq_len; j++)
 	{
-#pragma omp parallel for shared(alignments, piv_act, i) private(result) 
-		for (j = i + 1; j < seq_len; j++)
-		{
-			// ReSharper disable once CppJoinDeclarationAndAssignment
-			result = edlibAlign(sequences[j].c_str(), sequences[j].size(), sequences[i].c_str(), sequences[i].size(),
-				edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
+
+
+		// ReSharper disable once CppJoinDeclarationAndAssignment
+		result = edlibAlign(sequences[j].c_str(), sequences[j].size(), sequences[0].c_str(), sequences[0].size(),
+			edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_DISTANCE, NULL, 0));
 
 #pragma omp critical
+		{
+			dist[j] += result.editDistance;
+		}
+
+
+
+		edlibFreeAlignResult(result);
+	}
+
+
+
+
+	for (size_t i = 1; i < seq_len; i++)
+	{
+		for (size_t k = i + 1; k < seq_len; k++)
+		{
+
+			sum_acumulate += dist[i] + dist[k];
+		}
+
+		if (min_distance > sum_acumulate)
+		{
+
+			if (complete && sequences.size() * (static_cast<float>(max_length) / dif) > dist[i])
 			{
-				dist[i] += result.editDistance;
-				dist[j] += result.editDistance;
+				piv_act = i;
+				return;
 			}
 
-			alignments[i][j] = convert_to_vector(result.alignmentLength, result.alignment, sequences, j, i);
-			alignments[j][i] = make_pair(alignments[i][j].second, alignments[i][j].first);
 
+			min_distance = sum_acumulate;
+			piv_act = i;
+			sum_acumulate = 0;
+		}
+
+	}
+}
+
+
+void pair_alignment(vector<string>& sequences, vector<pair<string, string>>& alignments, int& piv)
+{
+
+	const auto seq_len = sequences.size();
+	// ReSharper disable once CppJoinDeclarationAndAssignment
+	EdlibAlignResult result;
+	int j = 0;
+
+
+#pragma omp parallel for shared(alignments) private(result) 
+	for (j = 0; j < seq_len; j++)
+	{
+		if (j != piv)
+		{
+
+			// ReSharper disable once CppJoinDeclarationAndAssignment
+			result = edlibAlign(sequences[j].c_str(), sequences[j].size(), sequences[piv].c_str(), sequences[piv].size(),
+				edlibNewAlignConfig(-1, EDLIB_MODE_NW, EDLIB_TASK_PATH, NULL, 0));
+
+			alignments[j] = convert_to_vector(result.alignmentLength, result.alignment, sequences, j, piv);
 
 			edlibFreeAlignResult(result);
 		}
-
-		if (sequences.size() * 220 > dist[i])
-		{
-			piv_act = i;
-			return;
-		}
-		//alignments[i].clear();
-
 	}
 
-	for (size_t i = 0; i < seq_len; i++)
-		if (min_distance > dist[i])
-		{
-			min_distance = dist[i];
-			piv_act = i;
-		}
 
 
 }
 
-
-void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& multi_align, int piv)
+void msa(vector<pair<string, string>>& pair_alignments, vector<string>& multi_align, int piv)
 {
 	string star;
 
 
-	for (size_t i = 0; i < pair_alignments[piv].size(); i++)
+	for (size_t i = 0; i < pair_alignments.size(); i++)
 		if (i != piv)
-			star = merge_star(star, pair_alignments[piv][i].second);
+			star = merge_star(star, pair_alignments[i].second);
 
-	
+
 
 	multi_align[piv] = star;
 
@@ -87,12 +132,12 @@ void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& 
 		{
 			if (piv == cnt) cnt++;
 
-			if (cnt == pair_alignments[piv].size())	return;
+			if (cnt == pair_alignments.size())	return;
 
 
-			a = pair_alignments[piv][cnt].second;
-			b = pair_alignments[piv][cnt].first[pos];
-			
+			a = pair_alignments[cnt].second;
+			b = pair_alignments[cnt].first[pos];
+
 			if (a[pos] == star[j])
 			{
 				substr += b;

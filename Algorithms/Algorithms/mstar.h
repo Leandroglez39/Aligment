@@ -7,9 +7,11 @@
 
 using namespace std;
 
-void build_distance_matrix(vector<string>& sequences, vector<vector<pair<string, string>>>& alignments, int& piv);
+void build_distance_matrix(vector<string>& sequences, int& piv, bool complete = false, float dif = 0.8);
 
-void msa(vector<vector<pair<string, string>>>& pair_alignments, vector<string>& multi_align, int piv);
+void pair_alignment(vector<string>& sequences, vector<pair<string, string>>& alignments, int& piv);
+
+void msa(vector<pair<string, string>>& pair_alignments, vector<string>& multi_align, int piv);
 
 string merge_star(string s1, string s2);
 
