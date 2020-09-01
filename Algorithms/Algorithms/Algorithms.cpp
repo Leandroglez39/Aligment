@@ -150,13 +150,13 @@ int main()
 
 	//auto instance = Tools();
 
-	string name = "data8";
+	string name = "set12000";
 	string txt = ".txt";
 	string fasta = ".fasta";
-	
+
 	auto start = clock();
 
-	gt.init_data(sequences, profiles, name+txt);
+	gt.init_data(sequences, profiles, name + txt);
 
 	vector<int> check_seq(sequences.size());
 
@@ -196,6 +196,8 @@ int main()
 
 	start = clock();
 
+	cout << mul_align[0].size() << endl;
+	
 	refine(mul_align, dic);
 
 	erase_gaps(mul_align);
@@ -215,10 +217,10 @@ int main()
 	std::cout << "Tiempo total en: ";
 	std::cout << static_cast<double>(clock() - ti) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
 
-
+	cout << mul_align[0].size() << endl;
 	start = clock();
 
-	input::save_alignment(name+fasta, mul_align);
+	input::save_alignment(name + fasta, mul_align);
 
 	std::cout << "Save en: ";
 	std::cout << static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC) << " seconds." << endl;
