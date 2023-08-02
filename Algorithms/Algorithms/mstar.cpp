@@ -146,7 +146,7 @@ void msa(vector<pair<string, string>>& pair_alignments, vector<string>& multi_al
 			else
 			{
 				substr += '-';
-			}
+			}			
 		}
 		multi_align[i] = substr;
 		cnt++;

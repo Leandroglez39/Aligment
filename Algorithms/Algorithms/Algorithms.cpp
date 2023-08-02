@@ -150,7 +150,7 @@ int main()
 
 	//auto instance = Tools();
 
-	string name = "set12000";
+	string name = "BPI_Challenge_2012";
 	string txt = ".txt";
 	string fasta = ".fasta";
 
@@ -198,7 +198,7 @@ int main()
 
 	cout << mul_align[0].size() << endl;
 	
-	refine(mul_align, dic);
+	//refine(mul_align, dic);
 
 	erase_gaps(mul_align);
 
